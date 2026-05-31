@@ -20,12 +20,14 @@
 body{font-family:'IBM Plex Sans','IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
 body.rtl{direction:rtl}
 
-/* SIDEBAR */
 aside{width:220px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0}
 .logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
 .logo-sheep{font-size:28px;line-height:1}
 .logo-name{font-size:16px;font-weight:600;color:var(--green);margin-top:4px}
-.logo-sub{font-size:11px;color:var(--text3);margin-top:1px;letter-spacing:.3px}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.mode-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;margin-top:6px}
+.mode-admin{background:var(--green-bg);color:var(--green-text)}
+.mode-visitor{background:var(--amber-bg);color:var(--amber-text)}
 nav{flex:1;padding:10px 0;overflow-y:auto}
 .ni{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;border-left:3px solid transparent;user-select:none}
 body.rtl .ni{border-left:none;border-right:3px solid transparent}
@@ -33,26 +35,25 @@ body.rtl .ni{border-left:none;border-right:3px solid transparent}
 .ni.active{background:var(--green-bg);color:var(--green-text);border-left-color:var(--green);font-weight:500}
 body.rtl .ni.active{border-left-color:transparent;border-right-color:var(--green)}
 .ni i{font-size:17px;width:20px;flex-shrink:0}
-.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border)}
-.lang-btn{width:100%;padding:8px;font-size:12px;cursor:pointer;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text2);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
-.lang-btn:hover{border-color:var(--border2);color:var(--text)}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.lang-btn,.mode-btn{width:100%;padding:7px;font-size:12px;cursor:pointer;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text2);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;font-family:inherit}
+.lang-btn:hover,.mode-btn:hover{border-color:var(--border2);color:var(--text)}
+.mode-btn.admin-mode{background:var(--green-bg);color:var(--green-text);border-color:#A8D080}
 
-/* MAIN */
 main{flex:1;display:flex;flex-direction:column;min-width:0;max-height:100vh;overflow-y:auto}
 .topbar{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between}
 .page-title{font-size:16px;font-weight:600;color:var(--text)}
 .page-sub{font-size:11px;color:var(--text3);margin-top:2px}
 .content{padding:20px 24px;flex:1}
 
-/* BUTTONS */
 .btn-p{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-size:12px;cursor:pointer;font-weight:500;transition:all .15s;font-family:inherit}
 .btn-p:hover{background:var(--green-text)}
 .btn-s{padding:6px 14px;font-size:12px;cursor:pointer;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .15s;font-family:inherit}
 .btn-s:hover{border-color:var(--border2);background:var(--bg)}
 .btn-d{padding:5px 9px;font-size:11px;cursor:pointer;border-radius:var(--r);border:1px solid #F7C1C1;background:transparent;color:var(--red);transition:all .15s}
 .btn-d:hover{background:var(--red-bg)}
+.btn-locked{padding:5px 9px;font-size:11px;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text3);cursor:not-allowed;opacity:.5}
 
-/* CARDS */
 .kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
 .kcard{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:16px 14px;border-top:3px solid var(--green)}
 .kcard.sky{border-top-color:var(--blue)}
@@ -62,7 +63,6 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;max-height:100vh;over
 .kval{font-size:28px;font-weight:600;color:var(--text);line-height:1.1;margin:6px 0 3px}
 .ksub{font-size:11px;color:var(--text3)}
 
-/* TABLE CARD */
 .card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:16px}
 .card-hd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#FAFAF8}
 .card-tt{font-size:13px;font-weight:500;color:var(--text)}
@@ -75,7 +75,6 @@ tr:last-child td{border-bottom:none}
 tr:hover td{background:#FAFAF8}
 tfoot td{background:#F7F6F2;font-weight:500;border-top:1px solid var(--border)}
 
-/* BADGES */
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500}
 .bg{background:var(--green-bg);color:var(--green-text)}
 .br{background:var(--red-bg);color:var(--red-text)}
@@ -85,7 +84,6 @@ tfoot td{background:#F7F6F2;font-weight:500;border-top:1px solid var(--border)}
 .aid-oui{background:var(--green-bg);color:var(--green-text);display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500}
 .aid-non{background:#F0EDE7;color:var(--text3);display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500}
 
-/* FORMS */
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px}
 .fgroup{display:flex;flex-direction:column;gap:5px}
 .fgroup.full{grid-column:1/-1}
@@ -93,7 +91,6 @@ label{font-size:10px;font-weight:500;color:var(--text2);text-transform:uppercase
 input,select{border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;font-size:13px;color:var(--text);background:var(--white);outline:none;font-family:inherit;width:100%;transition:border-color .15s}
 input:focus,select:focus{border-color:var(--blue)}
 
-/* MODAL */
 .moverlay{display:none;position:fixed;inset:0;background:rgba(26,26,20,.5);z-index:200;align-items:center;justify-content:center}
 .moverlay.open{display:flex}
 .modal{background:var(--white);border-radius:16px;width:min(500px,95vw);max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
@@ -102,7 +99,16 @@ input:focus,select:focus{border-color:var(--blue)}
 .mclose{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);line-height:1}
 .mft{padding:14px 16px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border)}
 
-/* MISC */
+/* LOGIN MODAL */
+.login-modal{background:var(--white);border-radius:16px;width:min(360px,95vw);box-shadow:0 20px 60px rgba(0,0,0,.2);padding:32px 28px;text-align:center}
+.login-icon{font-size:40px;margin-bottom:12px}
+.login-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px}
+.login-sub{font-size:12px;color:var(--text3);margin-bottom:24px}
+.login-input{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:14px;text-align:center;letter-spacing:3px;font-family:inherit;outline:none;margin-bottom:12px}
+.login-input:focus{border-color:var(--blue)}
+.login-error{font-size:12px;color:var(--red);margin-bottom:12px;display:none}
+.login-btns{display:flex;gap:10px;justify-content:center}
+
 .row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .fin3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 .fcell{text-align:center;padding:14px;background:var(--white);border-radius:var(--r);border:1px solid var(--border)}
@@ -114,17 +120,15 @@ input:focus,select:focus{border-color:var(--blue)}
 .bar-item{margin-bottom:14px}
 .bar-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px}
 .bar-track{background:#F0EDE7;border-radius:4px;height:9px;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
-.info-box{padding:11px 14px;background:var(--blue-bg);border:1px solid #B5D4F4;border-radius:var(--r);font-size:12px;color:var(--blue-text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.bar-fill{height:100%;border-radius:4px}
+.visitor-notice{padding:10px 14px;background:var(--amber-bg);border:1px solid #E8C070;border-radius:var(--r);font-size:12px;color:var(--amber-text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 
-/* MOBILE */
 .hamburger{display:none;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text)}
 .mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:98}
 @media(max-width:768px){
   aside{position:fixed;left:0;top:0;height:100vh;z-index:99;transform:translateX(-100%);transition:transform .25s}
   body.rtl aside{left:auto;right:0;transform:translateX(100%)}
   aside.open{transform:none}
-  body.rtl aside.open{transform:none}
   .hamburger{display:block}
   .mob-overlay.open{display:block}
   .content{padding:14px 16px}
@@ -144,6 +148,7 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="logo-sheep">🐑</div>
     <div class="logo-name">OMAR Pro</div>
     <div class="logo-sub" id="logoSub">Gestion Cheptel</div>
+    <div class="mode-badge" id="modeBadge">👁 Visiteur</div>
   </div>
   <nav>
     <div class="ni active" onclick="go('db')" data-p="db"><i class="ti ti-chart-bar"></i><span data-fr="Tableau de bord" data-ar="لوحة القيادة">Tableau de bord</span></div>
@@ -154,6 +159,7 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="ni" onclick="go('av')" data-p="av"><i class="ti ti-arrows-exchange"></i><span data-fr="Achats & Ventes" data-ar="مشتريات ومبيعات">Achats & Ventes</span></div>
   </nav>
   <div class="sidebar-footer">
+    <button class="mode-btn" id="modeBtn" onclick="toggleMode()"><i class="ti ti-lock"></i> <span id="modeBtnTxt">Mode Admin</span></button>
     <button class="lang-btn" onclick="toggleLang()"><i class="ti ti-world"></i> <span id="langBtnTxt">عربي</span></button>
   </div>
 </aside>
@@ -171,6 +177,7 @@ input:focus,select:focus{border-color:var(--blue)}
   <div class="content" id="content"></div>
 </main>
 
+<!-- MODAL FORMULAIRES -->
 <div class="moverlay" id="moverlay">
   <div class="modal">
     <div class="mhd"><span class="mtt" id="mtitle"></span><button class="mclose" onclick="cm()">✕</button></div>
@@ -179,8 +186,26 @@ input:focus,select:focus{border-color:var(--blue)}
   </div>
 </div>
 
+<!-- MODAL LOGIN ADMIN -->
+<div class="moverlay" id="loginOverlay">
+  <div class="login-modal">
+    <div class="login-icon">🔐</div>
+    <div class="login-title" id="loginTitle">Accès Administrateur</div>
+    <div class="login-sub" id="loginSub">Entrez le mot de passe pour accéder au mode admin</div>
+    <input type="password" class="login-input" id="loginInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+    <div class="login-error" id="loginError">Mot de passe incorrect</div>
+    <div class="login-btns">
+      <button class="btn-s" onclick="closeLogin()">Annuler</button>
+      <button class="btn-p" onclick="checkPwd()"><i class="ti ti-lock-open"></i> Entrer</button>
+    </div>
+  </div>
+</div>
+
 <script>
 let lang='fr';
+let isAdmin=false;
+const ADMIN_PWD='16/11/1968';
+
 const META={
   db:{fr:'Tableau de bord',ar:'لوحة القيادة',sf:'Vue d\'ensemble — Juin 2026',sa:'نظرة عامة — يونيو 2026'},
   ch:{fr:'Registre cheptel',ar:'سجل القطيع',sf:'Mouvements et effectifs',sa:'الحركات والأعداد'},
@@ -200,6 +225,66 @@ function T(k){return({
   save:{fr:'Enregistrer',ar:'حفظ'},cancel:{fr:'Annuler',ar:'إلغاء'},
 }[k]||{fr:k,ar:k})[lang];}
 function fn(n){return Number(n||0).toLocaleString('fr-DZ');}
+
+// ── MODE ADMIN ──
+function toggleMode(){
+  if(isAdmin){
+    isAdmin=false;
+    updateModeUI();
+    go(CP);
+  } else {
+    document.getElementById('loginOverlay').classList.add('open');
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginError').style.display='none';
+    setTimeout(()=>document.getElementById('loginInput').focus(),100);
+  }
+}
+function checkPwd(){
+  const val=document.getElementById('loginInput').value;
+  if(val===ADMIN_PWD){
+    isAdmin=true;
+    document.getElementById('loginOverlay').classList.remove('open');
+    updateModeUI();
+    go(CP);
+  } else {
+    document.getElementById('loginError').style.display='block';
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginInput').focus();
+  }
+}
+function closeLogin(){
+  document.getElementById('loginOverlay').classList.remove('open');
+}
+function updateModeUI(){
+  const badge=document.getElementById('modeBadge');
+  const btn=document.getElementById('modeBtn');
+  const btnTxt=document.getElementById('modeBtnTxt');
+  if(isAdmin){
+    badge.textContent='⚙️ Administrateur';
+    badge.className='mode-badge mode-admin';
+    btn.className='mode-btn admin-mode';
+    btnTxt.textContent=lang==='fr'?'Déconnexion Admin':'خروج من الإدارة';
+    btn.querySelector('i').className='ti ti-lock-open';
+  } else {
+    badge.textContent=lang==='fr'?'👁 Visiteur':'👁 زائر';
+    badge.className='mode-badge mode-visitor';
+    btn.className='mode-btn';
+    btnTxt.textContent=lang==='fr'?'Mode Admin':'وضع الإدارة';
+    btn.querySelector('i').className='ti ti-lock';
+  }
+}
+function adminBtn(action,id){
+  if(!isAdmin) return `<button class="btn-locked" title="${lang==='fr'?'Réservé admin':'للمسؤول فقط'}"><i class="ti ti-lock"></i></button>`;
+  return `<button class="btn-d" onclick="${action}(${id})"><i class="ti ti-trash"></i></button>`;
+}
+function adminAddBtn(action,label){
+  if(!isAdmin) return `<button class="btn-s" style="opacity:.5;cursor:not-allowed" disabled><i class="ti ti-lock"></i> ${lang==='fr'?'Admin requis':'للمسؤول فقط'}</button>`;
+  return `<button class="btn-p" onclick="${action}()"><i class="ti ti-plus"></i> ${label}</button>`;
+}
+function visitorBanner(){
+  if(isAdmin) return '';
+  return `<div class="visitor-notice"><i class="ti ti-eye"></i> ${lang==='fr'?'Mode lecture seule — connectez-vous en admin pour modifier les données':'وضع القراءة فقط — سجل دخول كمسؤول لتعديل البيانات'}</div>`;
+}
 
 const CAPITAL_DEPART=340000;
 const MOIS_LIST=['Juin 2026','Juillet 2026','Août 2026','Septembre 2026','Octobre 2026','Novembre 2026','Décembre 2026'];
@@ -262,8 +347,8 @@ const PAGES={
     const mx=Math.max(...catT,1);
     const bars=totDep>0
       ?cats.map((c,i)=>`<div class="bar-item"><div class="bar-lbl"><span>${c}</span><span>${fn(catT[i])} DZD</span></div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(catT[i]/mx*100)}%;background:${CAT_C[c]}"></div></div></div>`).join('')
-      :`<div class="empty"><i class="ti ti-chart-bar"></i>${lang==='fr'?'Aucune dépense saisie':'لا توجد نفقات مسجلة'}</div>`;
-    return`<div class="kgrid">
+      :`<div class="empty"><i class="ti ti-chart-bar"></i>${lang==='fr'?'Aucune dépense saisie':'لا توجد نفقات'}</div>`;
+    return`${visitorBanner()}<div class="kgrid">
       <div class="kcard"><div class="klabel">${lang==='fr'?'Effectif':'القطيع'}</div><div class="kval">${effectif}</div><div class="ksub">${lang==='fr'?'têtes':'رأس'}</div></div>
       <div class="kcard sky"><div class="klabel">${lang==='fr'?'Naissances':'مواليد'}</div><div class="kval">${totN}</div><div class="ksub">${lang==='fr'?'enregistrées':'مسجلة'}</div></div>
       <div class="kcard red"><div class="klabel">${lang==='fr'?'Mortalité':'نفوق'}</div><div class="kval">${totMo}</div><div class="ksub">${totN>0?Math.round(totMo/totN*100):0}%</div></div>
@@ -293,30 +378,30 @@ const PAGES={
       <td style="text-align:center">${r.fA>0?'+'+r.fA:r.fA||0}</td>
       <td style="text-align:center;font-weight:500;color:${r.tot>=0?'var(--green)':'var(--red)'}">${r.tot>0?'+'+r.tot:r.tot}</td>
       <td style="text-align:center;font-weight:600">${r.cum}</td>
-      <td><button class="btn-d" onclick="delCh(${r.id})"><i class="ti ti-trash"></i></button></td>
+      <td>${adminBtn('delCh',r.id)}</td>
     </tr>`).join('');
-    return`<div class="row-top">
+    return`${visitorBanner()}<div class="row-top">
       <div style="font-size:12px;color:var(--text2)">${lang==='fr'?'Effectif actuel :':'القطيع الحالي:'} <strong style="color:var(--green)">${effectif} ${lang==='fr'?'têtes':'رأس'}</strong></div>
-      <button class="btn-p" onclick="addCh()"><i class="ti ti-plus"></i> ${T('add')}</button>
+      ${adminAddBtn('addCh',T('add'))}
     </div>
     <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Journal des mouvements':'سجل الحركات'}</span></div>
-    <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${lang==='fr'?'Événement':'الحدث'}</th><th>${lang==='fr'?'Mâles':'ذكور'}</th><th>${lang==='fr'?'Fem.':'إناث'}</th><th>${lang==='fr'?'Mvt':'الحركة'}</th><th>${lang==='fr'?'Cumulé':'التراكمي'}</th><th></th></tr></thead>
+    <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${lang==='fr'?'Événement':'الحدث'}</th><th>M</th><th>F</th><th>${lang==='fr'?'Mvt':'الحركة'}</th><th>${lang==='fr'?'Cumulé':'التراكمي'}</th><th></th></tr></thead>
     <tbody>${rows}</tbody></table></div></div>`;
   },
   bb(){
     const n=DB.naissances;
-    if(!n.length)return`<div class="row-top"><span></span><button class="btn-p" onclick="addBb()"><i class="ti ti-plus"></i> ${T('add')}</button></div>
+    if(!n.length)return`${visitorBanner()}<div class="row-top"><span></span>${adminAddBtn('addBb',T('add'))}</div>
       <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Registre des naissances':'سجل المواليد'}</span></div>
-      <div class="empty"><i class="ti ti-heart"></i>${lang==='fr'?'Aucune naissance enregistrée':'لا توجد مواليد مسجلة'}</div></div>`;
+      <div class="empty"><i class="ti ti-heart"></i>${lang==='fr'?'Aucune naissance enregistrée':'لا توجد مواليد'}</div></div>`;
     const tM=n.reduce((s,x)=>s+x.m,0),tF=n.reduce((s,x)=>s+x.f,0),tMo=n.reduce((s,x)=>s+x.mort,0),tV=n.reduce((s,x)=>s+x.sol,0);
-    const rows=n.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td style="text-align:center">${r.m}</td><td style="text-align:center">${r.f}</td><td style="text-align:center;color:var(--red)">${r.mort}</td><td style="text-align:center;font-weight:600">${r.sol}</td><td><span class="${r.aid==='oui'?'aid-oui':'aid-non'}">${r.aid==='oui'?'✓ Aïd':'—'}</span></td><td style="font-size:11px;color:var(--text2)">${r.obs||'—'}</td><td><button class="btn-d" onclick="delBb(${r.id})"><i class="ti ti-trash"></i></button></td></tr>`).join('');
-    return`<div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-      <div class="kcard"><div class="klabel">${lang==='fr'?'Mâles nés':'ذكور'}</div><div class="kval">${tM}</div></div>
-      <div class="kcard sky"><div class="klabel">${lang==='fr'?'Femelles nées':'إناث'}</div><div class="kval">${tF}</div></div>
+    const rows=n.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td style="text-align:center">${r.m}</td><td style="text-align:center">${r.f}</td><td style="text-align:center;color:var(--red)">${r.mort}</td><td style="text-align:center;font-weight:600">${r.sol}</td><td><span class="${r.aid==='oui'?'aid-oui':'aid-non'}">${r.aid==='oui'?'✓ Aïd':'—'}</span></td><td style="font-size:11px;color:var(--text2)">${r.obs||'—'}</td><td>${adminBtn('delBb',r.id)}</td></tr>`).join('');
+    return`${visitorBanner()}<div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kcard"><div class="klabel">M ${lang==='fr'?'nés':'مواليد'}</div><div class="kval">${tM}</div></div>
+      <div class="kcard sky"><div class="klabel">F ${lang==='fr'?'nées':'مواليد'}</div><div class="kval">${tF}</div></div>
       <div class="kcard red"><div class="klabel">${lang==='fr'?'Morts':'نفوق'}</div><div class="kval">${tMo}</div></div>
       <div class="kcard"><div class="klabel">${lang==='fr'?'Vivants':'أحياء'}</div><div class="kval">${tV}</div></div>
     </div>
-    <div class="row-top"><span></span><button class="btn-p" onclick="addBb()"><i class="ti ti-plus"></i> ${T('add')}</button></div>
+    <div class="row-top"><span></span>${adminAddBtn('addBb',T('add'))}</div>
     <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Registre des naissances':'سجل المواليد'}</span></div>
     <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>M</th><th>F</th><th>${lang==='fr'?'Morts':'نفوق'}</th><th>${lang==='fr'?'Vivants':'أحياء'}</th><th>Aïd</th><th>${T('obs')}</th><th></th></tr></thead>
     <tbody>${rows}</tbody>
@@ -326,17 +411,17 @@ const PAGES={
   dep(){
     const moisP=[...new Set(DB.depenses.map(d=>d.mois))];
     const grand=DB.depenses.reduce((s,x)=>s+x.mont,0);
-    if(!DB.depenses.length)return`<div class="row-top"><span></span><button class="btn-p" onclick="addDep()"><i class="ti ti-plus"></i> ${T('add')}</button></div>
+    if(!DB.depenses.length)return`${visitorBanner()}<div class="row-top"><span></span>${adminAddBtn('addDep',T('add'))}</div>
       <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Dépenses':'المصاريف'}</span></div>
       <div class="empty"><i class="ti ti-receipt"></i>${lang==='fr'?'Aucune dépense enregistrée':'لا توجد نفقات'}</div></div>`;
     const blocks=moisP.map(mo=>{
       const items=DB.depenses.filter(d=>d.mois===mo);
       const tot=items.reduce((s,x)=>s+x.mont,0);
-      const rows=items.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td><span class="badge ${CAT_CLS[r.cat]||'bx'}">${r.cat}</span></td><td>${r.desc||'—'}</td><td style="text-align:right;font-weight:500">${fn(r.mont)}</td><td><button class="btn-d" onclick="delDep(${r.id})"><i class="ti ti-trash"></i></button></td></tr>`).join('');
+      const rows=items.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td><span class="badge ${CAT_CLS[r.cat]||'bx'}">${r.cat}</span></td><td>${r.desc||'—'}</td><td style="text-align:right;font-weight:500">${fn(r.mont)}</td><td>${adminBtn('delDep',r.id)}</td></tr>`).join('');
       return`<div class="card" style="margin-bottom:14px"><div class="card-hd"><span class="card-tt"><i class="ti ti-calendar"></i> ${mo}</span><span style="font-size:12px;font-weight:500;color:var(--text2)">${fn(tot)} DZD</span></div>
       <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${T('cat')}</th><th>${T('desc')}</th><th style="text-align:right">${lang==='fr'?'Montant':'المبلغ'}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
     }).join('');
-    return`<div class="row-top"><div style="font-size:12px;color:var(--text2)">Total : <strong>${fn(grand)} DZD</strong></div><button class="btn-p" onclick="addDep()"><i class="ti ti-plus"></i> ${T('add')}</button></div>${blocks}`;
+    return`${visitorBanner()}<div class="row-top"><div style="font-size:12px;color:var(--text2)">Total : <strong>${fn(grand)} DZD</strong></div>${adminAddBtn('addDep',T('add'))}</div>${blocks}`;
   },
   bil(){
     const d=DB.depenses,v=DB.ventes;
@@ -351,7 +436,7 @@ const PAGES={
       const mRes=mV-mA-mDep;
       return`<tr><td><strong>${m}</strong></td><td style="text-align:right">${i===0?fn(CAPITAL_DEPART):'—'}</td><td style="text-align:right;color:var(--green)">${mV?fn(mV):'—'}</td><td style="text-align:right;color:var(--red)">${(mDep+mA)?fn(mDep+mA):'—'}</td><td style="text-align:right;font-weight:500;color:${mRes>=0?'var(--green)':'var(--red)'}">${(mV||mDep||mA)?fn(mRes):'—'}</td></tr>`;
     }).join('');
-    return`<div class="fin3">
+    return`${visitorBanner()}<div class="fin3">
       <div class="fcell"><div class="fclbl">${lang==='fr'?'Capital départ':'رأس المال'}</div><div class="fcval">${fn(CAPITAL_DEPART)} <small style="font-size:11px">DZD</small></div></div>
       <div class="fcell"><div class="fclbl">${lang==='fr'?'Recettes':'إيرادات'}</div><div class="fcval pos">${fn(totV)} <small style="font-size:11px">DZD</small></div></div>
       <div class="fcell"><div class="fclbl">${lang==='fr'?'Solde actuel':'الرصيد'}</div><div class="fcval ${solde>=0?'pos':'neg'}">${fn(solde)} <small style="font-size:11px">DZD</small></div></div>
@@ -364,35 +449,58 @@ const PAGES={
     const v=DB.ventes;
     const tV=v.filter(x=>x.type==='VENTE').reduce((s,x)=>s+x.tot,0);
     const tA=v.filter(x=>x.type==='ACHAT').reduce((s,x)=>s+x.tot,0);
-    if(!v.length)return`<div class="row-top"><span></span><button class="btn-p" onclick="addAv()"><i class="ti ti-plus"></i> ${T('add')}</button></div>
+    if(!v.length)return`${visitorBanner()}<div class="row-top"><span></span>${adminAddBtn('addAv',T('add'))}</div>
       <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Achats & Ventes':'مشتريات ومبيعات'}</span></div>
       <div class="empty"><i class="ti ti-arrows-exchange"></i>${lang==='fr'?'Aucune transaction enregistrée':'لا توجد معاملات'}</div></div>`;
-    const rows=v.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td><span class="badge ${r.type==='VENTE'?'bg':'br'}">${r.type}</span></td><td>${r.sexe==='M'?T('male'):T('fem')}</td><td style="text-align:center">${r.qte}</td><td style="text-align:right">${fn(r.pu)}</td><td style="text-align:right;font-weight:600">${fn(r.tot)}</td><td style="font-size:11px">${r.obs||'—'}</td><td><button class="btn-d" onclick="delAv(${r.id})"><i class="ti ti-trash"></i></button></td></tr>`).join('');
-    return`<div class="fin3"><div class="fcell"><div class="fclbl">Ventes</div><div class="fcval pos">${fn(tV)} <small>DZD</small></div></div><div class="fcell"><div class="fclbl">Achats</div><div class="fcval neg">${fn(tA)} <small>DZD</small></div></div><div class="fcell"><div class="fclbl">Solde net</div><div class="fcval ${tV-tA>=0?'pos':'neg'}">${fn(tV-tA)} <small>DZD</small></div></div></div>
-    <div class="row-top"><span></span><button class="btn-p" onclick="addAv()"><i class="ti ti-plus"></i> ${T('add')}</button></div>
+    const rows=v.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td><span class="badge ${r.type==='VENTE'?'bg':'br'}">${r.type}</span></td><td>${r.sexe==='M'?T('male'):T('fem')}</td><td style="text-align:center">${r.qte}</td><td style="text-align:right">${fn(r.pu)}</td><td style="text-align:right;font-weight:600">${fn(r.tot)}</td><td style="font-size:11px">${r.obs||'—'}</td><td>${adminBtn('delAv',r.id)}</td></tr>`).join('');
+    return`${visitorBanner()}<div class="fin3"><div class="fcell"><div class="fclbl">Ventes</div><div class="fcval pos">${fn(tV)} <small>DZD</small></div></div><div class="fcell"><div class="fclbl">Achats</div><div class="fcval neg">${fn(tA)} <small>DZD</small></div></div><div class="fcell"><div class="fclbl">Solde net</div><div class="fcval ${tV-tA>=0?'pos':'neg'}">${fn(tV-tA)} <small>DZD</small></div></div></div>
+    <div class="row-top"><span></span>${adminAddBtn('addAv',T('add'))}</div>
     <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Registre des transactions':'سجل المعاملات'}</span></div>
     <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${T('type')}</th><th>${T('sexe')}</th><th>${T('qte')}</th><th style="text-align:right">${T('pu')}</th><th style="text-align:right">${T('total')}</th><th>${T('obs')}</th><th></th></tr></thead>
     <tbody>${rows}</tbody>
-    <tfoot><tr><td colspan="6">VENTES</td><td style="text-align:right;color:var(--green)">${fn(tV)}</td><td colspan="2"></td></tr><tr><td colspan="6">ACHATS</td><td style="text-align:right;color:var(--red)">${fn(tA)}</td><td colspan="2"></td></tr><tr><td colspan="6">SOLDE NET</td><td style="text-align:right;font-weight:600;color:${tV-tA>=0?'var(--green)':'var(--red)'}">${fn(tV-tA)}</td><td colspan="2"></td></tr></tfoot>
+    <tfoot><tr><td colspan="6">VENTES</td><td style="text-align:right;color:var(--green)">${fn(tV)}</td><td colspan="2"></td></tr><tr><td colspan="6">ACHATS</td><td style="text-align:right;color:var(--red)">${fn(tA)}</td><td colspan="2"></td></tr><tr><td colspan="6">SOLDE</td><td style="text-align:right;font-weight:600;color:${tV-tA>=0?'var(--green)':'var(--red)'}">${fn(tV-tA)}</td><td colspan="2"></td></tr></tfoot>
     </table></div></div>`;
   }
 };
 
-function addCh(){om(lang==='fr'?'Nouveau mouvement':'حركة جديدة',`<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fc_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mâles adultes':'ذكور بالغ'}</label><input type="number" id="fc_m" value="0"></div><div class="fgroup"><label>${lang==='fr'?'Femelles adultes':'إناث بالغ'}</label><input type="number" id="fc_f" value="0"></div><div class="fgroup"><label>${lang==='fr'?'Mouvement total':'الحركة الكلية'}</label><input type="number" id="fc_t" value="0"></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fc_o"></div></div>`,`<button class="btn-s" onclick="cm()">${T('cancel')}</button><button class="btn-p" onclick="svCh()">${T('save')}</button>`);}
+function addCh(){
+  if(!isAdmin)return;
+  om(lang==='fr'?'Nouveau mouvement':'حركة جديدة',
+    `<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fc_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mâles adultes':'ذكور بالغ'}</label><input type="number" id="fc_m" value="0"></div><div class="fgroup"><label>${lang==='fr'?'Femelles adultes':'إناث بالغ'}</label><input type="number" id="fc_f" value="0"></div><div class="fgroup"><label>${lang==='fr'?'Mouvement total':'الحركة الكلية'}</label><input type="number" id="fc_t" value="0"></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fc_o"></div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svCh()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
 function svCh(){const d=DB.cheptel,l=d[d.length-1]||{id:0,cum:0};const tot=parseInt(document.getElementById('fc_t').value)||0;d.push({id:l.id+1,date:document.getElementById('fc_d').value,obs:document.getElementById('fc_o').value,mA:parseInt(document.getElementById('fc_m').value)||0,fA:parseInt(document.getElementById('fc_f').value)||0,tot,cum:l.cum+tot});sv('ch',DB.cheptel);cm();go('ch');}
-function delCh(id){if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.cheptel=DB.cheptel.filter(x=>x.id!==id);sv('ch',DB.cheptel);go('ch');}}
+function delCh(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.cheptel=DB.cheptel.filter(x=>x.id!==id);sv('ch',DB.cheptel);go('ch');}}
 
-function addBb(){om(lang==='fr'?'Nouvelle naissance':'تسجيل ولادة',`<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fb_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mâles':'ذكور'}</label><input type="number" id="fb_m" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Femelles':'إناث'}</label><input type="number" id="fb_f" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Morts':'نفوق'}</label><input type="number" id="fb_mo" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Éligible Aïd':'أهل للعيد'}</label><select id="fb_aid"><option value="non">Non</option><option value="oui">Oui</option></select></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fb_o"></div></div>`,`<button class="btn-s" onclick="cm()">${T('cancel')}</button><button class="btn-p" onclick="svBb()">${T('save')}</button>`);}
+function addBb(){
+  if(!isAdmin)return;
+  om(lang==='fr'?'Nouvelle naissance':'تسجيل ولادة',
+    `<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fb_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mâles':'ذكور'}</label><input type="number" id="fb_m" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Femelles':'إناث'}</label><input type="number" id="fb_f" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Morts':'نفوق'}</label><input type="number" id="fb_mo" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Éligible Aïd':'أهل للعيد'}</label><select id="fb_aid"><option value="non">Non</option><option value="oui">Oui</option></select></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fb_o"></div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svBb()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
 function svBb(){const m=parseInt(document.getElementById('fb_m').value)||0;const f=parseInt(document.getElementById('fb_f').value)||0;const mo=parseInt(document.getElementById('fb_mo').value)||0;const d=DB.naissances,l=d[d.length-1]||{id:0};d.push({id:l.id+1,date:document.getElementById('fb_d').value,m,f,mort:mo,sol:m+f-mo,aid:document.getElementById('fb_aid').value,obs:document.getElementById('fb_o').value});sv('bb',DB.naissances);cm();go('bb');}
-function delBb(id){if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.naissances=DB.naissances.filter(x=>x.id!==id);sv('bb',DB.naissances);go('bb');}}
+function delBb(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.naissances=DB.naissances.filter(x=>x.id!==id);sv('bb',DB.naissances);go('bb');}}
 
-function addDep(){const mopts=MOIS_LIST.map(m=>`<option>${m}</option>`).join('');const copts=CATS.map(c=>`<option>${c}</option>`).join('');om(lang==='fr'?'Nouvelle dépense':'مصروف جديد',`<div class="fgrid"><div class="fgroup"><label>${lang==='fr'?'Mois':'الشهر'}</label><select id="fd_m">${mopts}</select></div><div class="fgroup"><label>${T('date')}</label><input type="date" id="fd_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${T('cat')}</label><select id="fd_c">${copts}</select></div><div class="fgroup"><label>${lang==='fr'?'Montant (DZD)':'المبلغ (دج)'}</label><input type="number" id="fd_mo" value="0" min="0"></div><div class="fgroup full"><label>${T('desc')}</label><input type="text" id="fd_de"></div></div>`,`<button class="btn-s" onclick="cm()">${T('cancel')}</button><button class="btn-p" onclick="svDep()">${T('save')}</button>`);}
+function addDep(){
+  if(!isAdmin)return;
+  const mopts=MOIS_LIST.map(m=>`<option>${m}</option>`).join('');
+  const copts=CATS.map(c=>`<option>${c}</option>`).join('');
+  om(lang==='fr'?'Nouvelle dépense':'مصروف جديد',
+    `<div class="fgrid"><div class="fgroup"><label>${lang==='fr'?'Mois':'الشهر'}</label><select id="fd_m">${mopts}</select></div><div class="fgroup"><label>${T('date')}</label><input type="date" id="fd_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${T('cat')}</label><select id="fd_c">${copts}</select></div><div class="fgroup"><label>${lang==='fr'?'Montant (DZD)':'المبلغ (دج)'}</label><input type="number" id="fd_mo" value="0" min="0"></div><div class="fgroup full"><label>${T('desc')}</label><input type="text" id="fd_de"></div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svDep()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
 function svDep(){const d=DB.depenses,l=d[d.length-1]||{id:0};d.push({id:l.id+1,mois:document.getElementById('fd_m').value,date:document.getElementById('fd_d').value,cat:document.getElementById('fd_c').value,desc:document.getElementById('fd_de').value,mont:parseInt(document.getElementById('fd_mo').value)||0});sv('dep',DB.depenses);cm();go('dep');}
-function delDep(id){if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.depenses=DB.depenses.filter(x=>x.id!==id);sv('dep',DB.depenses);go('dep');}}
+function delDep(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.depenses=DB.depenses.filter(x=>x.id!==id);sv('dep',DB.depenses);go('dep');}}
 
-function addAv(){const mopts=MOIS_LIST.map(m=>`<option>${m}</option>`).join('');om(lang==='fr'?'Nouvelle transaction':'معاملة جديدة',`<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fv_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mois':'الشهر'}</label><select id="fv_m">${mopts}</select></div><div class="fgroup"><label>${T('type')}</label><select id="fv_t"><option>VENTE</option><option>ACHAT</option></select></div><div class="fgroup"><label>${T('sexe')}</label><select id="fv_s"><option value="M">${T('male')}</option><option value="F">${T('fem')}</option></select></div><div class="fgroup"><label>${T('qte')}</label><input type="number" id="fv_q" value="1" min="1"></div><div class="fgroup"><label>${T('pu')} (DZD)</label><input type="number" id="fv_p" value="0" min="0"></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fv_o"></div></div>`,`<button class="btn-s" onclick="cm()">${T('cancel')}</button><button class="btn-p" onclick="svAv()">${T('save')}</button>`);}
+function addAv(){
+  if(!isAdmin)return;
+  const mopts=MOIS_LIST.map(m=>`<option>${m}</option>`).join('');
+  om(lang==='fr'?'Nouvelle transaction':'معاملة جديدة',
+    `<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fv_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mois':'الشهر'}</label><select id="fv_m">${mopts}</select></div><div class="fgroup"><label>${T('type')}</label><select id="fv_t"><option>VENTE</option><option>ACHAT</option></select></div><div class="fgroup"><label>${T('sexe')}</label><select id="fv_s"><option value="M">${T('male')}</option><option value="F">${T('fem')}</option></select></div><div class="fgroup"><label>${T('qte')}</label><input type="number" id="fv_q" value="1" min="1"></div><div class="fgroup"><label>${T('pu')} (DZD)</label><input type="number" id="fv_p" value="0" min="0"></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fv_o"></div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svAv()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
 function svAv(){const q=parseInt(document.getElementById('fv_q').value)||1;const p=parseInt(document.getElementById('fv_p').value)||0;const d=DB.ventes,l=d[d.length-1]||{id:0};d.push({id:l.id+1,date:document.getElementById('fv_d').value,mois:document.getElementById('fv_m').value,type:document.getElementById('fv_t').value,sexe:document.getElementById('fv_s').value,qte:q,pu:p,tot:q*p,obs:document.getElementById('fv_o').value});sv('av',DB.ventes);cm();go('av');}
-function delAv(id){if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.ventes=DB.ventes.filter(x=>x.id!==id);sv('av',DB.ventes);go('av');}}
+function delAv(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.ventes=DB.ventes.filter(x=>x.id!==id);sv('av',DB.ventes);go('av');}}
 
 function toggleLang(){
   lang=lang==='fr'?'ar':'fr';
@@ -400,6 +508,7 @@ function toggleLang(){
   document.getElementById('langBtnTxt').textContent=lang==='fr'?'عربي':'Français';
   document.getElementById('logoSub').textContent=lang==='ar'?'إدارة القطيع':'Gestion Cheptel';
   document.querySelectorAll('[data-fr]').forEach(el=>el.textContent=lang==='fr'?el.dataset.fr:el.dataset.ar);
+  updateModeUI();
   go(CP);
 }
 
