@@ -286,7 +286,9 @@ function visitorBanner(){
   return `<div class="visitor-notice"><i class="ti ti-eye"></i> ${lang==='fr'?'Mode lecture seule — connectez-vous en admin pour modifier les données':'وضع القراءة فقط — سجل دخول كمسؤول لتعديل البيانات'}</div>`;
 }
 
-const CAPITAL_DEPART=340000;
+const CAPITAL_DEPART_DEFAULT=340000;
+function getCapital(){return parseInt(localStorage.getItem("op_capital")||CAPITAL_DEPART_DEFAULT);}
+function setCapital(v){localStorage.setItem("op_capital",v);}
 const MOIS_LIST=['Juin 2026','Juillet 2026','Août 2026','Septembre 2026','Octobre 2026','Novembre 2026','Décembre 2026'];
 const CATS=['Alimentation','Vétérinaire','Transport','Infrastructure','Personnel','Divers'];
 const CAT_CLS={Alimentation:'bg',Vétérinaire:'bi',Transport:'ba',Infrastructure:'bx',Personnel:'bi',Divers:'bx'};
@@ -341,7 +343,7 @@ const PAGES={
     const totN=n.reduce((s,x)=>s+x.m+x.f,0);
     const totMo=n.reduce((s,x)=>s+x.mort,0);
     const effectif=DB.cheptel.length?DB.cheptel[DB.cheptel.length-1].cum:70;
-    const solde=CAPITAL_DEPART+totV-totA-totDep;
+    const solde=getCapital()+totV-totA-totDep;
     const cats=CATS.filter(c=>c!=='Personnel');
     const catT=cats.map(c=>d.filter(x=>x.cat===c).reduce((s,x)=>s+x.mont,0));
     const mx=Math.max(...catT,1);
@@ -352,7 +354,7 @@ const PAGES={
       <div class="kcard"><div class="klabel">${lang==='fr'?'Effectif':'القطيع'}</div><div class="kval">${effectif}</div><div class="ksub">${lang==='fr'?'têtes':'رأس'}</div></div>
       <div class="kcard sky"><div class="klabel">${lang==='fr'?'Naissances':'مواليد'}</div><div class="kval">${totN}</div><div class="ksub">${lang==='fr'?'enregistrées':'مسجلة'}</div></div>
       <div class="kcard red"><div class="klabel">${lang==='fr'?'Mortalité':'نفوق'}</div><div class="kval">${totMo}</div><div class="ksub">${totN>0?Math.round(totMo/totN*100):0}%</div></div>
-      <div class="kcard amb"><div class="klabel">${lang==='fr'?'Capital départ':'رأس المال'}</div><div class="kval" style="font-size:18px">${fn(CAPITAL_DEPART)}</div><div class="ksub">DZD</div></div>
+      <div class="kcard amb"><div class="klabel">${lang==='fr'?'Capital départ':'رأس المال'}</div><div class="kval" style="font-size:18px">${fn(getCapital())}</div><div class="ksub">DZD</div></div>
       <div class="kcard red"><div class="klabel">${lang==='fr'?'Dépenses':'نفقات'}</div><div class="kval" style="font-size:18px">${fn(totDep)}</div><div class="ksub">DZD</div></div>
       <div class="kcard ${solde>=0?'':'red'}"><div class="klabel">${lang==='fr'?'Solde actuel':'الرصيد'}</div><div class="kval ${solde>=0?'pos':'neg'}" style="font-size:18px">${fn(solde)}</div><div class="ksub">DZD</div></div>
     </div>
@@ -428,17 +430,18 @@ const PAGES={
     const totDep=d.reduce((s,x)=>s+x.mont,0);
     const totV=v.filter(x=>x.type==='VENTE').reduce((s,x)=>s+x.tot,0);
     const totA=v.filter(x=>x.type==='ACHAT').reduce((s,x)=>s+x.tot,0);
-    const solde=CAPITAL_DEPART+totV-totA-totDep;
+    const solde=getCapital()+totV-totA-totDep;
     const rows=MOIS_LIST.map((m,i)=>{
       const mDep=d.filter(x=>x.mois===m).reduce((s,x)=>s+x.mont,0);
       const mV=v.filter(x=>x.type==='VENTE'&&x.mois===m).reduce((s,x)=>s+x.tot,0);
       const mA=v.filter(x=>x.type==='ACHAT'&&x.mois===m).reduce((s,x)=>s+x.tot,0);
       const mRes=mV-mA-mDep;
-      return`<tr><td><strong>${m}</strong></td><td style="text-align:right">${i===0?fn(CAPITAL_DEPART):'—'}</td><td style="text-align:right;color:var(--green)">${mV?fn(mV):'—'}</td><td style="text-align:right;color:var(--red)">${(mDep+mA)?fn(mDep+mA):'—'}</td><td style="text-align:right;font-weight:500;color:${mRes>=0?'var(--green)':'var(--red)'}">${(mV||mDep||mA)?fn(mRes):'—'}</td></tr>`;
+      return`<tr><td><strong>${m}</strong></td><td style="text-align:right">${i===0?fn(getCapital()):'—'}</td><td style="text-align:right;color:var(--green)">${mV?fn(mV):'—'}</td><td style="text-align:right;color:var(--red)">${(mDep+mA)?fn(mDep+mA):'—'}</td><td style="text-align:right;font-weight:500;color:${mRes>=0?'var(--green)':'var(--red)'}">${(mV||mDep||mA)?fn(mRes):'—'}</td></tr>`;
     }).join('');
+    const capEditBtn=isAdmin?`<button class="btn-p" style="font-size:11px;padding:5px 12px;margin-top:6px" onclick="editCapital()"><i class="ti ti-pencil"></i> ${lang==='fr'?'Modifier':'تعديل'}</button>`:'';
     return`${visitorBanner()}<div class="fin3">
-      <div class="fcell"><div class="fclbl">${lang==='fr'?'Capital départ':'رأس المال'}</div><div class="fcval">${fn(CAPITAL_DEPART)} <small style="font-size:11px">DZD</small></div></div>
-      <div class="fcell"><div class="fclbl">${lang==='fr'?'Recettes':'إيرادات'}</div><div class="fcval pos">${fn(totV)} <small style="font-size:11px">DZD</small></div></div>
+      <div class="fcell"><div class="fclbl">${lang==='fr'?'Capital départ':'رأس المال'}</div><div class="fcval">${fn(getCapital())} <small style="font-size:11px">DZD</small>${capEditBtn}</div></div>
+      <div class="fcell"><div class="fclbl">${lang==='fr'?'Recettes':'الإيرادات'}</div><div class="fcval pos">${fn(totV)} <small style="font-size:11px">DZD</small></div></div>
       <div class="fcell"><div class="fclbl">${lang==='fr'?'Solde actuel':'الرصيد'}</div><div class="fcval ${solde>=0?'pos':'neg'}">${fn(solde)} <small style="font-size:11px">DZD</small></div></div>
     </div>
     <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Bilan Juin → Décembre 2026':'الميزانية يونيو → ديسمبر 2026'}</span></div>
@@ -513,6 +516,29 @@ function toggleLang(){
 }
 
 go('db');
+
+function editCapital(){
+  if(!isAdmin)return;
+  const cur=getCapital();
+  om(lang==='fr'?'Modifier le capital de départ':'تعديل رأس المال',
+    `<div class="fgrid"><div class="fgroup full">
+      <label>${lang==='fr'?'Capital de départ (DZD)':'رأس المال الابتدائي (دج)'}</label>
+      <input type="number" id="cap_val" value="${cur}" min="0" style="font-size:16px;font-weight:600;text-align:right">
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">${lang==='fr'?'Valeur actuelle :':'القيمة الحالية :'} <strong>${fn(cur)} DZD</strong></div>
+    </div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button>
+     <button class="btn-p" style="background:var(--amber)" onclick="resetCapital()"><i class="ti ti-refresh"></i> ${lang==='fr'?'Reset 340 000':'إعادة تعيين'}</button>
+     <button class="btn-p" onclick="saveCapital()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
+function saveCapital(){
+  const val=parseInt(document.getElementById('cap_val').value)||0;
+  setCapital(val);cm();go('bil');
+}
+function resetCapital(){
+  if(confirm(lang==='fr'?'Réinitialiser le capital à 340 000 DZD ?':'إعادة تعيين رأس المال إلى 340,000 دج؟')){
+    setCapital(340000);cm();go('bil');
+  }
+}
 </script>
 </body>
 </html>
