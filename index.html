@@ -348,6 +348,8 @@ const PAGES={
     const totA=v.filter(x=>x.type==='ACHAT').reduce((s,x)=>s+x.tot,0);
     const totN=n.reduce((s,x)=>s+x.m+x.f,0);
     const totMo=n.reduce((s,x)=>s+x.mort,0);
+    const e=DB.effectif;
+    const effectif=e.mPlus+e.fPlus+e.mMoins+e.fMoins;
     const solde=getCapital()+totV-totA-totDep;
     const cats=CATS.filter(c=>c!=='Personnel');
     const catT=cats.map(c=>d.filter(x=>x.cat===c).reduce((s,x)=>s+x.mont,0));
