@@ -297,12 +297,17 @@ const CAT_C={Alimentation:'#3B6D11',Vétérinaire:'#185FA5',Transport:'#854F0B',
 const DC={
   cheptel:[{id:1,date:'01/06/2026',obs:'Cheptel de départ — post-Aïd',mA:4,fA:35,tot:70,cum:70}],
   naissances:[],depenses:[],ventes:[],
+  // Effectif par tranche : {mPlus:M+6mois, fPlus:F+6mois, mMoins:M-6mois, fMoins:F-6mois}
+  effectif:{mPlus:4,fPlus:35,mMoins:10,fMoins:21},
+  mouvements:[{id:1,date:'01/06/2026',tranche:'plus6',sexe:'M',qte:4,type:'init',obs:'Mâles adultes départ'}],
 };
 function load(){return{
   cheptel:JSON.parse(localStorage.getItem('op_ch')||'null')||[...DC.cheptel],
   naissances:JSON.parse(localStorage.getItem('op_bb')||'null')||[...DC.naissances],
   depenses:JSON.parse(localStorage.getItem('op_dep')||'null')||[...DC.depenses],
   ventes:JSON.parse(localStorage.getItem('op_av')||'null')||[...DC.ventes],
+  effectif:JSON.parse(localStorage.getItem('op_eff')||'null')||{mPlus:4,fPlus:35,mMoins:10,fMoins:21},
+  mouvements:JSON.parse(localStorage.getItem('op_mvt')||'null')||[],
 };}
 function sv(k,d){localStorage.setItem('op_'+k,JSON.stringify(d));}
 let DB=load();
@@ -373,22 +378,65 @@ const PAGES={
     </div>`;
   },
   ch(){
-    const effectif=DB.cheptel.length?DB.cheptel[DB.cheptel.length-1].cum:70;
-    const rows=DB.cheptel.map(r=>`<tr>
-      <td>${r.id}</td><td>${r.date}</td><td>${r.obs}</td>
-      <td style="text-align:center">${r.mA>0?'+'+r.mA:r.mA||0}</td>
-      <td style="text-align:center">${r.fA>0?'+'+r.fA:r.fA||0}</td>
-      <td style="text-align:center;font-weight:500;color:${r.tot>=0?'var(--green)':'var(--red)'}">${r.tot>0?'+'+r.tot:r.tot}</td>
-      <td style="text-align:center;font-weight:600">${r.cum}</td>
-      <td>${adminBtn('delCh',r.id)}</td>
-    </tr>`).join('');
-    return`${visitorBanner()}<div class="row-top">
-      <div style="font-size:12px;color:var(--text2)">${lang==='fr'?'Effectif actuel :':'القطيع الحالي:'} <strong style="color:var(--green)">${effectif} ${lang==='fr'?'têtes':'رأس'}</strong></div>
-      ${adminAddBtn('addCh',T('add'))}
+    const e=DB.effectif;
+    const totalPlus=e.mPlus+e.fPlus;
+    const totalMoins=e.mMoins+e.fMoins;
+    const totalAll=totalPlus+totalMoins;
+    const rows=DB.mouvements.map(r=>{
+      const signe=r.qte>=0?'+':'';
+      const trLabel=r.tranche==='plus6'?(lang==='fr'?'+6 mois':'+6 أشهر'):(lang==='fr'?'-6 mois':'-6 أشهر');
+      const sexeLabel=r.sexe==='M'?(lang==='fr'?'Mâle':'ذكر'):(lang==='fr'?'Femelle':'أنثى');
+      return`<tr>
+        <td>${r.id}</td><td>${r.date}</td>
+        <td><span class="badge ${r.tranche==='plus6'?'bg':'bi'}">${trLabel}</span></td>
+        <td>${sexeLabel}</td>
+        <td style="text-align:center;font-weight:500;color:${r.qte>=0?'var(--green)':'var(--red)'}">${signe}${r.qte}</td>
+        <td style="font-size:11px;color:var(--text2)">${r.obs||'—'}</td>
+        <td>${adminBtn('delMvt',r.id)}</td>
+      </tr>`;
+    }).join('');
+    return`${visitorBanner()}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="card">
+        <div class="card-hd"><span class="card-tt">🐑 ${lang==='fr'?'+6 mois':'+6 أشهر'}</span><span style="font-size:18px;font-weight:700;color:var(--green)">${totalPlus}</span></div>
+        <table>
+          <thead><tr><th></th><th style="text-align:center">${lang==='fr'?'Mâles':'ذكور'}</th><th style="text-align:center">${lang==='fr'?'Femelles':'إناث'}</th><th style="text-align:center">Total</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:500">+6 mois</td><td style="text-align:center;font-size:18px;font-weight:600;color:var(--blue)">${e.mPlus}</td><td style="text-align:center;font-size:18px;font-weight:600;color:var(--green)">${e.fPlus}</td><td style="text-align:center;font-size:18px;font-weight:700">${totalPlus}</td></tr>
+          </tbody>
+        </table>
+        ${isAdmin?`<div style="display:flex;gap:8px;padding:12px">
+          <button class="btn-p" style="flex:1;font-size:11px" onclick="addMvt('plus6')"><i class="ti ti-plus"></i> ${lang==='fr'?'Ajouter':'إضافة'}</button>
+          <button class="btn-p" style="flex:1;font-size:11px;background:var(--red)" onclick="retireMvt('plus6')"><i class="ti ti-minus"></i> ${lang==='fr'?'Retirer':'إزالة'}</button>
+        </div>`:''}
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-tt">🐑 ${lang==='fr'?'-6 mois':'-6 أشهر'}</span><span style="font-size:18px;font-weight:700;color:var(--blue)">${totalMoins}</span></div>
+        <table>
+          <thead><tr><th></th><th style="text-align:center">${lang==='fr'?'Mâles':'ذكور'}</th><th style="text-align:center">${lang==='fr'?'Femelles':'إناث'}</th><th style="text-align:center">Total</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:500">-6 mois</td><td style="text-align:center;font-size:18px;font-weight:600;color:var(--blue)">${e.mMoins}</td><td style="text-align:center;font-size:18px;font-weight:600;color:var(--green)">${e.fMoins}</td><td style="text-align:center;font-size:18px;font-weight:700">${totalMoins}</td></tr>
+          </tbody>
+        </table>
+        ${isAdmin?`<div style="display:flex;gap:8px;padding:12px">
+          <button class="btn-p" style="flex:1;font-size:11px" onclick="addMvt('moins6')"><i class="ti ti-plus"></i> ${lang==='fr'?'Ajouter':'إضافة'}</button>
+          <button class="btn-p" style="flex:1;font-size:11px;background:var(--red)" onclick="retireMvt('moins6')"><i class="ti ti-minus"></i> ${lang==='fr'?'Retirer':'إزالة'}</button>
+        </div>`:''}
+      </div>
     </div>
-    <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Journal des mouvements':'سجل الحركات'}</span></div>
-    <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${lang==='fr'?'Événement':'الحدث'}</th><th>M</th><th>F</th><th>${lang==='fr'?'Mvt':'الحركة'}</th><th>${lang==='fr'?'Cumulé':'التراكمي'}</th><th></th></tr></thead>
-    <tbody>${rows}</tbody></table></div></div>`;
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hd"><span class="card-tt">📊 ${lang==='fr'?'Effectif total':'إجمالي القطيع'}</span><span style="font-size:22px;font-weight:700;color:var(--green)">${totalAll} ${lang==='fr'?'têtes':'رأس'}</span></div>
+      <table><thead><tr><th></th><th style="text-align:center">${lang==='fr'?'Mâles':'ذكور'}</th><th style="text-align:center">${lang==='fr'?'Femelles':'إناث'}</th><th style="text-align:center">Total</th></tr></thead>
+      <tbody>
+        <tr><td>+6 mois</td><td style="text-align:center">${e.mPlus}</td><td style="text-align:center">${e.fPlus}</td><td style="text-align:center;font-weight:600">${totalPlus}</td></tr>
+        <tr><td>-6 mois</td><td style="text-align:center">${e.mMoins}</td><td style="text-align:center">${e.fMoins}</td><td style="text-align:center;font-weight:600">${totalMoins}</td></tr>
+      </tbody>
+      <tfoot><tr><td>TOTAL</td><td style="text-align:center">${e.mPlus+e.mMoins}</td><td style="text-align:center">${e.fPlus+e.fMoins}</td><td style="text-align:center">${totalAll}</td></tr></tfoot>
+      </table>
+    </div>
+    ${DB.mouvements.length?`<div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Historique des mouvements':'سجل الحركات'}</span></div>
+    <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${lang==='fr'?'Tranche':'الفئة'}</th><th>${lang==='fr'?'Sexe':'الجنس'}</th><th style="text-align:center">${lang==='fr'?'Quantité':'الكمية'}</th><th>${T('obs')}</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table></div></div>`:''}`;
   },
   bb(){
     const n=DB.naissances;
@@ -466,14 +514,63 @@ const PAGES={
   }
 };
 
-function addCh(){
+function addMvt(tranche){
   if(!isAdmin)return;
-  om(lang==='fr'?'Nouveau mouvement':'حركة جديدة',
-    `<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fc_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mâles adultes':'ذكور بالغ'}</label><input type="number" id="fc_m" value="0"></div><div class="fgroup"><label>${lang==='fr'?'Femelles adultes':'إناث بالغ'}</label><input type="number" id="fc_f" value="0"></div><div class="fgroup"><label>${lang==='fr'?'Mouvement total':'الحركة الكلية'}</label><input type="number" id="fc_t" value="0"></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fc_o"></div></div>`,
-    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svCh()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+  const tLabel=tranche==='plus6'?(lang==='fr'?'+6 mois':'+6 أشهر'):(lang==='fr'?'-6 mois':'-6 أشهر');
+  om(lang==='fr'?`Ajouter — ${tLabel}`:`إضافة — ${tLabel}`,
+    `<div class="fgrid">
+      <div class="fgroup"><label>${T('date')}</label><input type="date" id="mv_d" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="fgroup"><label>${lang==='fr'?'Sexe':'الجنس'}</label><select id="mv_s"><option value="M">${lang==='fr'?'Mâle':'ذكر'}</option><option value="F">${lang==='fr'?'Femelle':'أنثى'}</option></select></div>
+      <div class="fgroup"><label>${lang==='fr'?'Nombre de têtes':'عدد الرؤوس'}</label><input type="number" id="mv_q" value="1" min="1"></div>
+      <div class="fgroup full"><label>${T('obs')}</label><input type="text" id="mv_o" placeholder="${lang==='fr'?'Achat, naissance...':'شراء، مواليد...'}"></div>
+    </div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svMvt('${tranche}',1)"><i class="ti ti-check"></i> ${T('save')}</button>`);
 }
-function svCh(){const d=DB.cheptel,l=d[d.length-1]||{id:0,cum:0};const tot=parseInt(document.getElementById('fc_t').value)||0;d.push({id:l.id+1,date:document.getElementById('fc_d').value,obs:document.getElementById('fc_o').value,mA:parseInt(document.getElementById('fc_m').value)||0,fA:parseInt(document.getElementById('fc_f').value)||0,tot,cum:l.cum+tot});sv('ch',DB.cheptel);cm();go('ch');}
-function delCh(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.cheptel=DB.cheptel.filter(x=>x.id!==id);sv('ch',DB.cheptel);go('ch');}}
+function retireMvt(tranche){
+  if(!isAdmin)return;
+  const tLabel=tranche==='plus6'?(lang==='fr'?'+6 mois':'+6 أشهر'):(lang==='fr'?'-6 mois':'-6 أشهر');
+  om(lang==='fr'?`Retirer — ${tLabel}`:`إزالة — ${tLabel}`,
+    `<div class="fgrid">
+      <div class="fgroup"><label>${T('date')}</label><input type="date" id="mv_d" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="fgroup"><label>${lang==='fr'?'Sexe':'الجنس'}</label><select id="mv_s"><option value="M">${lang==='fr'?'Mâle':'ذكر'}</option><option value="F">${lang==='fr'?'Femelle':'أنثى'}</option></select></div>
+      <div class="fgroup"><label>${lang==='fr'?'Nombre de têtes':'عدد الرؤوس'}</label><input type="number" id="mv_q" value="1" min="1"></div>
+      <div class="fgroup full"><label>${T('obs')}</label><input type="text" id="mv_o" placeholder="${lang==='fr'?'Vente, décès...':'بيع، نفوق...'}"></div>
+    </div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" style="background:var(--red)" onclick="svMvt('${tranche}',-1)"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
+function svMvt(tranche,sign){
+  const sexe=document.getElementById('mv_s').value;
+  const qte=(parseInt(document.getElementById('mv_q').value)||1)*sign;
+  const obs=document.getElementById('mv_o').value;
+  const date=document.getElementById('mv_d').value;
+  const e=DB.effectif;
+  if(tranche==='plus6'){if(sexe==='M')e.mPlus+=qte;else e.fPlus+=qte;}
+  else{if(sexe==='M')e.mMoins+=qte;else e.fMoins+=qte;}
+  e.mPlus=Math.max(0,e.mPlus);e.fPlus=Math.max(0,e.fPlus);
+  e.mMoins=Math.max(0,e.mMoins);e.fMoins=Math.max(0,e.fMoins);
+  const mvts=DB.mouvements;
+  const lastId=mvts.length?mvts[mvts.length-1].id:0;
+  mvts.push({id:lastId+1,date,tranche,sexe,qte,obs});
+  sv('eff',DB.effectif);sv('mvt',DB.mouvements);cm();go('ch');
+}
+function delMvt(id){
+  if(!isAdmin)return;
+  if(confirm(lang==='fr'?'Supprimer ce mouvement ? L\'effectif sera recalculé.':'حذف هذه الحركة؟')){
+    const mvt=DB.mouvements.find(x=>x.id===id);
+    if(mvt){
+      const e=DB.effectif;
+      if(mvt.tranche==='plus6'){if(mvt.sexe==='M')e.mPlus-=mvt.qte;else e.fPlus-=mvt.qte;}
+      else{if(mvt.sexe==='M')e.mMoins-=mvt.qte;else e.fMoins-=mvt.qte;}
+      e.mPlus=Math.max(0,e.mPlus);e.fPlus=Math.max(0,e.fPlus);
+      e.mMoins=Math.max(0,e.mMoins);e.fMoins=Math.max(0,e.fMoins);
+      DB.mouvements=DB.mouvements.filter(x=>x.id!==id);
+      sv('eff',DB.effectif);sv('mvt',DB.mouvements);go('ch');
+    }
+  }
+}
+function addCh(){if(!isAdmin)return;addMvt('plus6');}
+function svCh(){}
+function delCh(id){delMvt(id);}
 
 function addBb(){
   if(!isAdmin)return;
