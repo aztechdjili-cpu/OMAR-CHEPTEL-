@@ -3,340 +3,639 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Journal de Bord — OMAR Cheptel</title>
+<title>OMAR Pro — Gestion Cheptel</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Spline+Sans:wght@400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F6F2;--white:#FFFFFF;--border:#E2DDD4;--border2:#C8C2B8;
+  --text:#1A1A14;--text2:#6B6558;--text3:#A09890;
+  --green:#3B6D11;--green-bg:#EAF3DE;--green-text:#27500A;
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#791F1F;
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-text:#0C447C;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#633806;
+  --r:8px;--rl:12px;
+}
+body{font-family:'IBM Plex Sans','IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+body.rtl{direction:rtl}
 
-  :root{
-    --navy:#1A5276;
-    --navy-d:#134260;
-    --band:#EBF5FB;
-    --ink:#1c2733;
-    --muted:#5a6b7a;
-    --line:#d8e2ea;
-    --bg:#f4f7f9;
-    --white:#fff;
-    --green:#1e8449;
-    --amber:#b9770e;
-    --grey:#7a8a98;
-    --red:#922b21;
-    --shadow:0 1px 2px rgba(26,82,118,.06),0 8px 24px rgba(26,82,118,.07);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    font-family:'Spline Sans',sans-serif;
-    background:
-      radial-gradient(1200px 500px at 80% -10%, rgba(26,82,118,.06), transparent 60%),
-      var(--bg);
-    color:var(--ink);
-    min-height:100vh;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+aside{width:220px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0}
+.logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.logo-sheep{font-size:28px;line-height:1}
+.logo-name{font-size:16px;font-weight:600;color:var(--green);margin-top:4px}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.mode-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;margin-top:6px}
+.mode-admin{background:var(--green-bg);color:var(--green-text)}
+.mode-visitor{background:var(--amber-bg);color:var(--amber-text)}
+nav{flex:1;padding:10px 0;overflow-y:auto}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;border-left:3px solid transparent;user-select:none}
+body.rtl .ni{border-left:none;border-right:3px solid transparent}
+.ni:hover{background:#F0EDE7;color:var(--text)}
+.ni.active{background:var(--green-bg);color:var(--green-text);border-left-color:var(--green);font-weight:500}
+body.rtl .ni.active{border-left-color:transparent;border-right-color:var(--green)}
+.ni i{font-size:17px;width:20px;flex-shrink:0}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.lang-btn,.mode-btn{width:100%;padding:7px;font-size:12px;cursor:pointer;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text2);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;font-family:inherit}
+.lang-btn:hover,.mode-btn:hover{border-color:var(--border2);color:var(--text)}
+.mode-btn.admin-mode{background:var(--green-bg);color:var(--green-text);border-color:#A8D080}
 
-  header.top{
-    background:linear-gradient(135deg,var(--navy),var(--navy-d));
-    color:#fff;border-radius:18px;padding:26px 28px;
-    box-shadow:var(--shadow);position:relative;overflow:hidden;
-  }
-  header.top::after{
-    content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;
-    background:radial-gradient(circle,rgba(255,255,255,.10),transparent 70%);
-  }
-  header.top h1{
-    font-family:'Fraunces',serif;font-weight:600;font-size:30px;letter-spacing:-.5px;
-    display:flex;align-items:center;gap:12px;
-  }
-  header.top p{color:#cfe2ef;margin-top:6px;font-size:14px}
-  .stats{display:flex;gap:22px;margin-top:18px;flex-wrap:wrap}
-  .stat{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);
-    border-radius:12px;padding:10px 16px;backdrop-filter:blur(4px)}
-  .stat b{font-family:'Fraunces',serif;font-size:22px;display:block;line-height:1}
-  .stat span{font-size:11px;color:#cfe2ef;text-transform:uppercase;letter-spacing:.06em}
+main{flex:1;display:flex;flex-direction:column;min-width:0;max-height:100vh;overflow-y:auto}
+.topbar{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between}
+.page-title{font-size:16px;font-weight:600;color:var(--text)}
+.page-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.content{padding:20px 24px;flex:1}
 
-  .sync{display:inline-flex;align-items:center;gap:7px;margin-top:14px;font-size:12.5px;
-    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);
-    padding:6px 12px;border-radius:20px;color:#cfe2ef}
-  .sync .dot{width:8px;height:8px;border-radius:50%;background:var(--grey)}
-  .sync.ok .dot{background:#2ecc71;box-shadow:0 0 0 3px rgba(46,204,113,.25)}
-  .sync.err .dot{background:#e74c3c}
-  .sync.load .dot{background:#f1c40f;animation:pulse 1s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-p{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-size:12px;cursor:pointer;font-weight:500;transition:all .15s;font-family:inherit}
+.btn-p:hover{background:var(--green-text)}
+.btn-s{padding:6px 14px;font-size:12px;cursor:pointer;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .15s;font-family:inherit}
+.btn-s:hover{border-color:var(--border2);background:var(--bg)}
+.btn-d{padding:5px 9px;font-size:11px;cursor:pointer;border-radius:var(--r);border:1px solid #F7C1C1;background:transparent;color:var(--red);transition:all .15s}
+.btn-d:hover{background:var(--red-bg)}
+.btn-locked{padding:5px 9px;font-size:11px;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text3);cursor:not-allowed;opacity:.5}
 
-  .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:24px 0 16px}
-  .search{flex:1;min-width:200px;position:relative}
-  .search input{width:100%;padding:11px 14px 11px 38px;border:1px solid var(--line);
-    border-radius:11px;font:inherit;background:#fff;color:var(--ink)}
-  .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5}
-  select.filter{padding:11px 14px;border:1px solid var(--line);border-radius:11px;
-    font:inherit;background:#fff;color:var(--ink);cursor:pointer}
-  .btn{border:none;border-radius:11px;padding:11px 18px;font:inherit;font-weight:600;
-    cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.15s}
-  .btn-primary{background:var(--navy);color:#fff}
-  .btn-primary:hover{background:var(--navy-d)}
-  .btn-ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
-  .btn-ghost:hover{background:var(--band)}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.kcard{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:16px 14px;border-top:3px solid var(--green)}
+.kcard.sky{border-top-color:var(--blue)}
+.kcard.red{border-top-color:var(--red)}
+.kcard.amb{border-top-color:var(--amber)}
+.klabel{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:500}
+.kval{font-size:28px;font-weight:600;color:var(--text);line-height:1.1;margin:6px 0 3px}
+.ksub{font-size:11px;color:var(--text3)}
 
-  .entries{display:flex;flex-direction:column;gap:12px}
-  .card{background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy);
-    border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);
-    display:grid;grid-template-columns:96px 1fr auto;gap:16px;align-items:start;
-    animation:rise .35s ease both}
-  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .card .date{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);font-size:15px;line-height:1.3}
-  .card .date small{display:block;font-family:'Spline Sans';font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
-  .card .body h3{font-size:15px;font-weight:600;margin-bottom:4px}
-  .card .body p{font-size:13.5px;color:var(--muted);line-height:1.5;white-space:pre-wrap}
-  .card .action{font-size:12.5px;margin-top:8px;color:var(--ink);background:var(--band);
-    border-radius:8px;padding:6px 10px;display:inline-block}
-  .meta{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-  .tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap}
-  .row-actions{display:flex;gap:6px}
-  .icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;width:30px;height:30px;
-    cursor:pointer;display:grid;place-items:center;color:var(--muted);transition:.15s}
-  .icon-btn:hover{background:var(--band);color:var(--navy)}
-  .status{font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
-  .status::before{content:"";width:7px;height:7px;border-radius:50%}
-  .s-afaire::before{background:var(--grey)} .s-afaire{color:var(--grey)}
-  .s-encours::before{background:var(--amber)} .s-encours{color:var(--amber)}
-  .s-fait::before{background:var(--green)} .s-fait{color:var(--green)}
-  .s-annule::before{background:var(--red)} .s-annule{color:var(--red)}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:16px}
+.card-hd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#FAFAF8}
+.card-tt{font-size:13px;font-weight:500;color:var(--text)}
+.tblwrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);font-weight:500;background:#F7F6F2;border-bottom:1px solid var(--border)}
+body.rtl th{text-align:right}
+td{padding:9px 14px;border-bottom:1px solid #F0EDE7;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAF8}
+tfoot td{background:#F7F6F2;font-weight:500;border-top:1px solid var(--border)}
 
-  .empty{text-align:center;padding:70px 20px;color:var(--muted)}
-  .empty svg{opacity:.35;margin-bottom:14px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500}
+.bg{background:var(--green-bg);color:var(--green-text)}
+.br{background:var(--red-bg);color:var(--red-text)}
+.ba{background:var(--amber-bg);color:var(--amber-text)}
+.bi{background:var(--blue-bg);color:var(--blue-text)}
+.bx{background:#F0EDE7;color:var(--text2)}
+.aid-oui{background:var(--green-bg);color:var(--green-text);display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500}
+.aid-non{background:#F0EDE7;color:var(--text3);display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500}
 
-  .overlay{position:fixed;inset:0;background:rgba(19,40,52,.45);backdrop-filter:blur(3px);
-    display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow:auto}
-  .overlay.open{display:flex}
-  .modal{background:#fff;border-radius:18px;width:100%;max-width:560px;box-shadow:0 24px 60px rgba(19,40,52,.3);
-    animation:rise .25s ease both}
-  .modal header{background:var(--navy);color:#fff;padding:18px 24px;border-radius:18px 18px 0 0;
-    font-family:'Fraunces',serif;font-size:19px;font-weight:600}
-  .modal .form{padding:22px 24px;display:flex;flex-direction:column;gap:14px}
-  .field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;
-    text-transform:uppercase;letter-spacing:.04em}
-  .field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);
-    border-radius:10px;font:inherit;color:var(--ink);background:#fff}
-  .field textarea{resize:vertical;min-height:80px}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .modal footer{padding:0 24px 22px;display:flex;justify-content:flex-end;gap:10px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px}
+.fgroup{display:flex;flex-direction:column;gap:5px}
+.fgroup.full{grid-column:1/-1}
+label{font-size:10px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+input,select{border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;font-size:13px;color:var(--text);background:var(--white);outline:none;font-family:inherit;width:100%;transition:border-color .15s}
+input:focus,select:focus{border-color:var(--blue)}
 
-  footer.foot{text-align:center;margin-top:40px;color:var(--muted);font-size:12px}
-  @media(max-width:640px){
-    .card{grid-template-columns:1fr;gap:10px}
-    .meta{flex-direction:row;align-items:center;justify-content:space-between}
-    .grid2{grid-template-columns:1fr}
-  }
+.moverlay{display:none;position:fixed;inset:0;background:rgba(26,26,20,.5);z-index:200;align-items:center;justify-content:center}
+.moverlay.open{display:flex}
+.modal{background:var(--white);border-radius:16px;width:min(500px,95vw);max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mhd{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:#FAFAF8;border-radius:16px 16px 0 0}
+.mtt{font-size:14px;font-weight:500}
+.mclose{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);line-height:1}
+.mft{padding:14px 16px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border)}
+
+/* LOGIN MODAL */
+.login-modal{background:var(--white);border-radius:16px;width:min(360px,95vw);box-shadow:0 20px 60px rgba(0,0,0,.2);padding:32px 28px;text-align:center}
+.login-icon{font-size:40px;margin-bottom:12px}
+.login-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px}
+.login-sub{font-size:12px;color:var(--text3);margin-bottom:24px}
+.login-input{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:14px;text-align:center;letter-spacing:3px;font-family:inherit;outline:none;margin-bottom:12px}
+.login-input:focus{border-color:var(--blue)}
+.login-error{font-size:12px;color:var(--red);margin-bottom:12px;display:none}
+.login-btns{display:flex;gap:10px;justify-content:center}
+
+.row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.fin3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.fcell{text-align:center;padding:14px;background:var(--white);border-radius:var(--r);border:1px solid var(--border)}
+.fclbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);font-weight:500;margin-bottom:6px}
+.fcval{font-size:18px;font-weight:600}
+.pos{color:var(--green)}.neg{color:var(--red)}
+.empty{text-align:center;padding:44px 20px;color:var(--text3);font-size:13px}
+.empty i{font-size:40px;display:block;margin-bottom:10px;opacity:.35}
+.bar-item{margin-bottom:14px}
+.bar-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px}
+.bar-track{background:#F0EDE7;border-radius:4px;height:9px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.visitor-notice{padding:10px 14px;background:var(--amber-bg);border:1px solid #E8C070;border-radius:var(--r);font-size:12px;color:var(--amber-text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+.hamburger{display:none;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text)}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:98}
+@media(max-width:768px){
+  aside{position:fixed;left:0;top:0;height:100vh;z-index:99;transform:translateX(-100%);transition:transform .25s}
+  body.rtl aside{left:auto;right:0;transform:translateX(100%)}
+  aside.open{transform:none}
+  .hamburger{display:block}
+  .mob-overlay.open{display:block}
+  .content{padding:14px 16px}
+  .topbar{padding:12px 16px}
+  .kgrid{grid-template-columns:1fr 1fr}
+  .fin3{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <h1>📔 Journal de Bord</h1>
-    <p>OMAR Cheptel — événements, notes & rappels. Journal commun synchronisé.</p>
-    <div class="stats">
-      <div class="stat"><b id="st-total">0</b><span>Entrées</span></div>
-      <div class="stat"><b id="st-todo">0</b><span>À faire</span></div>
-      <div class="stat"><b id="st-month">0</b><span>Ce mois-ci</span></div>
-    </div>
-    <div class="sync load" id="syncBadge"><span class="dot"></span><span id="syncText">Connexion…</span></div>
-  </header>
 
-  <div class="toolbar">
-    <div class="search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input id="search" placeholder="Rechercher un événement, une note…">
-    </div>
-    <select class="filter" id="filterCat"><option value="">Toutes catégories</option></select>
-    <select class="filter" id="filterStatus">
-      <option value="">Tous statuts</option>
-      <option>À faire</option><option>En cours</option><option>Fait</option><option>Annulé</option>
-    </select>
-    <button class="btn btn-ghost" id="exportBtn">⤓ Exporter</button>
-    <button class="btn btn-primary" id="addBtn">＋ Nouvelle entrée</button>
+<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
+<aside id="sidebar">
+  <div class="logo">
+    <div class="logo-sheep">🐑</div>
+    <div class="logo-name">OMAR Pro</div>
+    <div class="logo-sub" id="logoSub">Gestion Cheptel</div>
+    <div class="mode-badge" id="modeBadge">👁 Visiteur</div>
   </div>
+  <nav>
+    <div class="ni active" onclick="go('db')" data-p="db"><i class="ti ti-chart-bar"></i><span data-fr="Tableau de bord" data-ar="لوحة القيادة">Tableau de bord</span></div>
+    <div class="ni" onclick="go('ch')" data-p="ch"><i class="ti ti-list"></i><span data-fr="Registre cheptel" data-ar="سجل القطيع">Registre cheptel</span></div>
+    <div class="ni" onclick="go('bb')" data-p="bb"><i class="ti ti-heart"></i><span data-fr="Naissances" data-ar="المواليد">Naissances</span></div>
+    <div class="ni" onclick="go('dep')" data-p="dep"><i class="ti ti-receipt"></i><span data-fr="Dépenses" data-ar="المصاريف">Dépenses</span></div>
+    <div class="ni" onclick="go('bil')" data-p="bil"><i class="ti ti-scale"></i><span data-fr="Bilan financier" data-ar="الميزانية">Bilan financier</span></div>
+    <div class="ni" onclick="go('av')" data-p="av"><i class="ti ti-arrows-exchange"></i><span data-fr="Achats & Ventes" data-ar="مشتريات ومبيعات">Achats & Ventes</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="mode-btn" id="modeBtn" onclick="toggleMode()"><i class="ti ti-lock"></i> <span id="modeBtnTxt">Mode Admin</span></button>
+    <button class="lang-btn" onclick="toggleLang()"><i class="ti ti-world"></i> <span id="langBtnTxt">عربي</span></button>
+  </div>
+</aside>
 
-  <div class="entries" id="list"></div>
-  <footer class="foot">Journal commun — les entrées sont partagées en temps réel avec tous ceux qui ont le lien.</footer>
-</div>
+<main>
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
+      <div>
+        <div class="page-title" id="ptitle">Tableau de bord</div>
+        <div class="page-sub" id="psub">Vue d'ensemble — Juin 2026</div>
+      </div>
+    </div>
+  </div>
+  <div class="content" id="content"></div>
+</main>
 
-<div class="overlay" id="overlay">
+<!-- MODAL FORMULAIRES -->
+<div class="moverlay" id="moverlay">
   <div class="modal">
-    <header id="modalTitle">Nouvelle entrée</header>
-    <div class="form">
-      <input type="hidden" id="editId">
-      <div class="grid2">
-        <div class="field"><label>Date</label><input type="date" id="f-date"></div>
-        <div class="field"><label>Catégorie</label>
-          <select id="f-cat">
-            <option>Sanitaire</option><option>Reproduction</option><option>Alimentation</option>
-            <option>Météo</option><option>Logistique</option><option>Décision</option>
-            <option>Rappel</option><option>Divers</option>
-          </select>
-        </div>
-      </div>
-      <div class="field"><label>Titre de l'événement</label><input id="f-title" placeholder="Ex. : Vaccination du lot nord"></div>
-      <div class="field"><label>Note / détail</label><textarea id="f-note" placeholder="Description, observations…"></textarea></div>
-      <div class="grid2">
-        <div class="field"><label>Action à suivre</label><input id="f-action" placeholder="Optionnel"></div>
-        <div class="field"><label>Statut</label>
-          <select id="f-status"><option>À faire</option><option>En cours</option><option>Fait</option><option>Annulé</option></select>
-        </div>
-      </div>
-    </div>
-    <footer>
-      <button class="btn btn-ghost" id="cancelBtn">Annuler</button>
-      <button class="btn btn-primary" id="saveBtn">Enregistrer</button>
-    </footer>
+    <div class="mhd"><span class="mtt" id="mtitle"></span><button class="mclose" onclick="cm()">✕</button></div>
+    <div id="mbody"></div>
+    <div class="mft" id="mfooter"></div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- MODAL LOGIN ADMIN -->
+<div class="moverlay" id="loginOverlay">
+  <div class="login-modal">
+    <div class="login-icon">🔐</div>
+    <div class="login-title" id="loginTitle">Accès Administrateur</div>
+    <div class="login-sub" id="loginSub">Entrez le mot de passe pour accéder au mode admin</div>
+    <input type="password" class="login-input" id="loginInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+    <div class="login-error" id="loginError">Mot de passe incorrect</div>
+    <div class="login-btns">
+      <button class="btn-s" onclick="closeLogin()">Annuler</button>
+      <button class="btn-p" onclick="checkPwd()"><i class="ti ti-lock-open"></i> Entrer</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ---- Configuration Supabase ----
-const SUPABASE_URL='https://dfwlenkiejgbetsazpsq.supabase.co';
-const SUPABASE_KEY='sb_publishable_HdbL33Z4cSyKOaet2HMoqA_6a4NvQ2o';
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let lang='fr';
+let isAdmin=false;
+const ADMIN_PWD='16/11/1968';
 
-const CATS=['Sanitaire','Reproduction','Alimentation','Météo','Logistique','Décision','Rappel','Divers'];
-const CAT_COLOR={Sanitaire:'#922b21',Reproduction:'#7d3c98',Alimentation:'#1e8449',
-  'Météo':'#2471a3',Logistique:'#b9770e','Décision':'#1A5276',Rappel:'#117a65',Divers:'#5a6b7a'};
-const STATUS_CLASS={'À faire':'s-afaire','En cours':'s-encours','Fait':'s-fait','Annulé':'s-annule'};
+const META={
+  db:{fr:'Tableau de bord',ar:'لوحة القيادة',sf:'Vue d\'ensemble — Juin 2026',sa:'نظرة عامة — يونيو 2026'},
+  ch:{fr:'Registre cheptel',ar:'سجل القطيع',sf:'Mouvements et effectifs',sa:'الحركات والأعداد'},
+  bb:{fr:'Gestion naissances',ar:'إدارة المواليد',sf:'Registre des agneaux',sa:'سجل الحملان'},
+  dep:{fr:'Dépenses',ar:'المصاريف',sf:'Suivi par catégorie',sa:'متابعة حسب الفئة'},
+  bil:{fr:'Bilan financier',ar:'الميزانية المالية',sf:'Résultats mensuels',sa:'النتائج الشهرية'},
+  av:{fr:'Achats & Ventes',ar:'مشتريات ومبيعات',sf:'Registre des transactions',sa:'سجل المعاملات'},
+};
+function T(k){return({
+  add:{fr:'+ Ajouter',ar:'+ إضافة'},date:{fr:'Date',ar:'التاريخ'},
+  cat:{fr:'Catégorie',ar:'الفئة'},desc:{fr:'Description',ar:'الوصف'},
+  obs:{fr:'Observation',ar:'ملاحظة'},type:{fr:'Type',ar:'النوع'},
+  sexe:{fr:'Sexe',ar:'الجنس'},qte:{fr:'Quantité',ar:'الكمية'},
+  pu:{fr:'Prix unitaire',ar:'سعر الوحدة'},total:{fr:'Total',ar:'المجموع'},
+  male:{fr:'Mâle',ar:'ذكر'},fem:{fr:'Femelle',ar:'أنثى'},
+  mois:{fr:'Mois',ar:'الشهر'},res:{fr:'Résultat net',ar:'النتيجة'},
+  save:{fr:'Enregistrer',ar:'حفظ'},cancel:{fr:'Annuler',ar:'إلغاء'},
+}[k]||{fr:k,ar:k})[lang];}
+function fn(n){return Number(n||0).toLocaleString('fr-DZ');}
 
-let data=[];
-
-function esc(s){return(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function fmtDate(d){if(!d)return'';const[y,m,j]=d.split('-');
-  const mois=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-  return j+' '+mois[+m-1]+' '+y}
-function weekday(d){if(!d)return'';return new Date(d).toLocaleDateString('fr-FR',{weekday:'long'})}
-
-function setSync(state,text){
-  const b=document.getElementById('syncBadge');
-  b.className='sync '+state;
-  document.getElementById('syncText').textContent=text;
-}
-
-const fc=document.getElementById('filterCat');
-CATS.forEach(c=>{const o=document.createElement('option');o.textContent=c;fc.appendChild(o)});
-
-async function fetchAll(){
-  setSync('load','Synchronisation…');
-  const {data:rows,error}=await sb.from('entries').select('*').order('date',{ascending:false}).order('created_at',{ascending:false});
-  if(error){setSync('err','Hors ligne — '+error.message);console.error(error);return}
-  data=rows||[];
-  setSync('ok','Synchronisé');
-  render();
-}
-
-function render(){
-  const q=document.getElementById('search').value.toLowerCase();
-  const fcat=document.getElementById('filterCat').value;
-  const fst=document.getElementById('filterStatus').value;
-  let rows=data.filter(e=>{
-    const hay=((e.title||'')+' '+(e.note||'')+' '+(e.action||'')+' '+(e.cat||'')).toLowerCase();
-    return(!q||hay.includes(q))&&(!fcat||e.cat===fcat)&&(!fst||e.status===fst);
-  });
-
-  const ym=new Date().toISOString().slice(0,7);
-  document.getElementById('st-total').textContent=data.length;
-  document.getElementById('st-todo').textContent=data.filter(e=>e.status==='À faire').length;
-  document.getElementById('st-month').textContent=data.filter(e=>(e.date||'').startsWith(ym)).length;
-
-  const list=document.getElementById('list');
-  if(!rows.length){
-    list.innerHTML=`<div class="empty">
-      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#1A5276" stroke-width="1.4"><path d="M4 4h13l3 3v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
-      <p>${data.length?'Aucune entrée ne correspond à la recherche.':'Aucune entrée pour le moment. Cliquez sur « Nouvelle entrée » pour commencer.'}</p></div>`;
-    return;
+// ── MODE ADMIN ──
+function toggleMode(){
+  if(isAdmin){
+    isAdmin=false;
+    updateModeUI();
+    go(CP);
+  } else {
+    document.getElementById('loginOverlay').classList.add('open');
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginError').style.display='none';
+    setTimeout(()=>document.getElementById('loginInput').focus(),100);
   }
-  list.innerHTML=rows.map(e=>`
-    <div class="card" style="border-left-color:${CAT_COLOR[e.cat]||'#1A5276'}">
-      <div class="date">${fmtDate(e.date)||'—'}<small>${weekday(e.date)}</small></div>
-      <div class="body">
-        <h3>${esc(e.title)||'(sans titre)'}</h3>
-        ${e.note?`<p>${esc(e.note)}</p>`:''}
-        ${e.action?`<div class="action">↳ ${esc(e.action)}</div>`:''}
-      </div>
-      <div class="meta">
-        <span class="tag" style="background:${(CAT_COLOR[e.cat]||'#1A5276')}1a;color:${CAT_COLOR[e.cat]||'#1A5276'}">${esc(e.cat)}</span>
-        <span class="status ${STATUS_CLASS[e.status]||''}">${esc(e.status)}</span>
-        <div class="row-actions">
-          <button class="icon-btn" title="Modifier" onclick="edit('${e.id}')">✎</button>
-          <button class="icon-btn" title="Supprimer" onclick="del('${e.id}')">🗑</button>
-        </div>
-      </div>
-    </div>`).join('');
+}
+function checkPwd(){
+  const val=document.getElementById('loginInput').value;
+  if(val===ADMIN_PWD){
+    isAdmin=true;
+    document.getElementById('loginOverlay').classList.remove('open');
+    updateModeUI();
+    go(CP);
+  } else {
+    document.getElementById('loginError').style.display='block';
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginInput').focus();
+  }
+}
+function closeLogin(){
+  document.getElementById('loginOverlay').classList.remove('open');
+}
+function updateModeUI(){
+  const badge=document.getElementById('modeBadge');
+  const btn=document.getElementById('modeBtn');
+  const btnTxt=document.getElementById('modeBtnTxt');
+  if(isAdmin){
+    badge.textContent='⚙️ Administrateur';
+    badge.className='mode-badge mode-admin';
+    btn.className='mode-btn admin-mode';
+    btnTxt.textContent=lang==='fr'?'Déconnexion Admin':'خروج من الإدارة';
+    btn.querySelector('i').className='ti ti-lock-open';
+  } else {
+    badge.textContent=lang==='fr'?'👁 Visiteur':'👁 زائر';
+    badge.className='mode-badge mode-visitor';
+    btn.className='mode-btn';
+    btnTxt.textContent=lang==='fr'?'Mode Admin':'وضع الإدارة';
+    btn.querySelector('i').className='ti ti-lock';
+  }
+}
+function adminBtn(action,id){
+  if(!isAdmin) return `<button class="btn-locked" title="${lang==='fr'?'Réservé admin':'للمسؤول فقط'}"><i class="ti ti-lock"></i></button>`;
+  return `<button class="btn-d" onclick="${action}(${id})"><i class="ti ti-trash"></i></button>`;
+}
+function adminAddBtn(action,label){
+  if(!isAdmin) return `<button class="btn-s" style="opacity:.5;cursor:not-allowed" disabled><i class="ti ti-lock"></i> ${lang==='fr'?'Admin requis':'للمسؤول فقط'}</button>`;
+  return `<button class="btn-p" onclick="${action}()"><i class="ti ti-plus"></i> ${label}</button>`;
+}
+function visitorBanner(){
+  if(isAdmin) return '';
+  return `<div class="visitor-notice"><i class="ti ti-eye"></i> ${lang==='fr'?'Mode lecture seule — connectez-vous en admin pour modifier les données':'وضع القراءة فقط — سجل دخول كمسؤول لتعديل البيانات'}</div>`;
 }
 
-const ov=document.getElementById('overlay');
-function openModal(entry){
-  document.getElementById('modalTitle').textContent=entry?'Modifier l\'entrée':'Nouvelle entrée';
-  document.getElementById('editId').value=entry?entry.id:'';
-  document.getElementById('f-date').value=entry?entry.date:new Date().toISOString().slice(0,10);
-  document.getElementById('f-cat').value=entry?entry.cat:'Sanitaire';
-  document.getElementById('f-title').value=entry?entry.title:'';
-  document.getElementById('f-note').value=entry?entry.note:'';
-  document.getElementById('f-action').value=entry?entry.action:'';
-  document.getElementById('f-status').value=entry?entry.status:'À faire';
-  ov.classList.add('open');
+const CAPITAL_DEPART_DEFAULT=340000;
+function getCapital(){return parseInt(localStorage.getItem("op_capital")||CAPITAL_DEPART_DEFAULT);}
+function setCapital(v){localStorage.setItem("op_capital",v);}
+const MOIS_LIST=['Juin 2026','Juillet 2026','Août 2026','Septembre 2026','Octobre 2026','Novembre 2026','Décembre 2026'];
+const CATS=['Alimentation','Vétérinaire','Transport','Infrastructure','Personnel','Divers'];
+const CAT_CLS={Alimentation:'bg',Vétérinaire:'bi',Transport:'ba',Infrastructure:'bx',Personnel:'bi',Divers:'bx'};
+const CAT_C={Alimentation:'#3B6D11',Vétérinaire:'#185FA5',Transport:'#854F0B',Infrastructure:'#BA7517',Personnel:'#533AB7',Divers:'#888780'};
+
+const DC={
+  cheptel:[{id:1,date:'01/06/2026',obs:'Cheptel de départ — post-Aïd',mA:4,fA:35,tot:70,cum:70}],
+  naissances:[],depenses:[],ventes:[],
+  // Effectif par tranche : {mPlus:M+6mois, fPlus:F+6mois, mMoins:M-6mois, fMoins:F-6mois}
+  effectif:{mPlus:4,fPlus:35,mMoins:10,fMoins:21},
+  mouvements:[{id:1,date:'01/06/2026',tranche:'plus6',sexe:'M',qte:4,type:'init',obs:'Mâles adultes départ'}],
+};
+function load(){return{
+  cheptel:JSON.parse(localStorage.getItem('op_ch')||'null')||[...DC.cheptel],
+  naissances:JSON.parse(localStorage.getItem('op_bb')||'null')||[...DC.naissances],
+  depenses:JSON.parse(localStorage.getItem('op_dep')||'null')||[...DC.depenses],
+  ventes:JSON.parse(localStorage.getItem('op_av')||'null')||[...DC.ventes],
+  effectif:JSON.parse(localStorage.getItem('op_eff')||'null')||{mPlus:4,fPlus:35,mMoins:10,fMoins:21},
+  mouvements:JSON.parse(localStorage.getItem('op_mvt')||'null')||[],
+};}
+function sv(k,d){localStorage.setItem('op_'+k,JSON.stringify(d));}
+let DB=load();
+
+function cm(){document.getElementById('moverlay').classList.remove('open');}
+function om(title,body,footer){
+  document.getElementById('mtitle').textContent=title;
+  document.getElementById('mbody').innerHTML=body;
+  document.getElementById('mfooter').innerHTML=footer;
+  document.getElementById('moverlay').classList.add('open');
 }
-function closeModal(){ov.classList.remove('open')}
-window.edit=id=>openModal(data.find(e=>e.id===id));
-window.del=async id=>{
-  if(!confirm('Supprimer cette entrée ?'))return;
-  setSync('load','Suppression…');
-  const {error}=await sb.from('entries').delete().eq('id',id);
-  if(error){setSync('err','Erreur suppression');alert(error.message);return}
-  await fetchAll();
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobOverlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobOverlay').classList.remove('open');
+}
+
+let CP='db';
+function go(p){
+  CP=p;
+  document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('active',n.dataset.p===p));
+  const m=META[p];
+  document.getElementById('ptitle').textContent=lang==='fr'?m.fr:m.ar;
+  document.getElementById('psub').textContent=lang==='fr'?m.sf:m.sa;
+  document.getElementById('content').innerHTML=PAGES[p]();
+  closeSidebar();
+}
+
+const PAGES={
+  db(){
+    const d=DB.depenses,v=DB.ventes,n=DB.naissances;
+    const totDep=d.reduce((s,x)=>s+x.mont,0);
+    const totV=v.filter(x=>x.type==='VENTE').reduce((s,x)=>s+x.tot,0);
+    const totA=v.filter(x=>x.type==='ACHAT').reduce((s,x)=>s+x.tot,0);
+    const totN=n.reduce((s,x)=>s+x.m+x.f,0);
+    const totMo=n.reduce((s,x)=>s+x.mort,0);
+    const effectif=DB.cheptel.length?DB.cheptel[DB.cheptel.length-1].cum:70;
+    const solde=getCapital()+totV-totA-totDep;
+    const cats=CATS.filter(c=>c!=='Personnel');
+    const catT=cats.map(c=>d.filter(x=>x.cat===c).reduce((s,x)=>s+x.mont,0));
+    const mx=Math.max(...catT,1);
+    const bars=totDep>0
+      ?cats.map((c,i)=>`<div class="bar-item"><div class="bar-lbl"><span>${c}</span><span>${fn(catT[i])} DZD</span></div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(catT[i]/mx*100)}%;background:${CAT_C[c]}"></div></div></div>`).join('')
+      :`<div class="empty"><i class="ti ti-chart-bar"></i>${lang==='fr'?'Aucune dépense saisie':'لا توجد نفقات'}</div>`;
+    return`${visitorBanner()}<div class="kgrid">
+      <div class="kcard"><div class="klabel">${lang==='fr'?'Effectif':'القطيع'}</div><div class="kval">${effectif}</div><div class="ksub">${lang==='fr'?'têtes':'رأس'}</div></div>
+      <div class="kcard sky"><div class="klabel">${lang==='fr'?'Naissances':'مواليد'}</div><div class="kval">${totN}</div><div class="ksub">${lang==='fr'?'enregistrées':'مسجلة'}</div></div>
+      <div class="kcard red"><div class="klabel">${lang==='fr'?'Mortalité':'نفوق'}</div><div class="kval">${totMo}</div><div class="ksub">${totN>0?Math.round(totMo/totN*100):0}%</div></div>
+      <div class="kcard amb"><div class="klabel">${lang==='fr'?'Capital départ':'رأس المال'}</div><div class="kval" style="font-size:18px">${fn(getCapital())}</div><div class="ksub">DZD</div></div>
+      <div class="kcard red"><div class="klabel">${lang==='fr'?'Dépenses':'نفقات'}</div><div class="kval" style="font-size:18px">${fn(totDep)}</div><div class="ksub">DZD</div></div>
+      <div class="kcard ${solde>=0?'':'red'}"><div class="klabel">${lang==='fr'?'Solde actuel':'الرصيد'}</div><div class="kval ${solde>=0?'pos':'neg'}" style="font-size:18px">${fn(solde)}</div><div class="ksub">DZD</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="card"><div class="card-hd"><span class="card-tt"><i class="ti ti-chart-bar"></i> ${lang==='fr'?'Dépenses / catégorie':'النفقات / فئة'}</span></div><div style="padding:16px">${bars}</div></div>
+      <div class="card"><div class="card-hd"><span class="card-tt"><i class="ti ti-users"></i> ${lang==='fr'?'Composition cheptel':'تركيبة القطيع'}</span></div>
+      <table><thead><tr><th>${lang==='fr'?'Catégorie':'الفئة'}</th><th style="text-align:right">M</th><th style="text-align:right">F</th><th style="text-align:right">Total</th></tr></thead>
+      <tbody>
+        <tr><td>${lang==='fr'?'Adultes ≥9 mois':'بالغون'}</td><td style="text-align:right">4</td><td style="text-align:right">35</td><td style="text-align:right;font-weight:500">39</td></tr>
+        <tr><td>${lang==='fr'?'Agneaux 6-9 mois':'6-9 أشهر'}</td><td style="text-align:right">4</td><td style="text-align:right">5</td><td style="text-align:right;font-weight:500">9</td></tr>
+        <tr><td>${lang==='fr'?'Agneaux 3-6 mois':'3-6 أشهر'}</td><td style="text-align:right">9</td><td style="text-align:right">8</td><td style="text-align:right;font-weight:500">17</td></tr>
+        <tr><td>${lang==='fr'?'Agneaux 0-3 mois':'0-3 أشهر'}</td><td style="text-align:right">3</td><td style="text-align:right">2</td><td style="text-align:right;font-weight:500">5</td></tr>
+      </tbody>
+      <tfoot><tr><td>TOTAL</td><td style="text-align:right">20</td><td style="text-align:right">50</td><td style="text-align:right">70</td></tr></tfoot>
+      </table></div>
+    </div>`;
+  },
+  ch(){
+    const e=DB.effectif;
+    const totalPlus=e.mPlus+e.fPlus;
+    const totalMoins=e.mMoins+e.fMoins;
+    const totalAll=totalPlus+totalMoins;
+    const rows=DB.mouvements.map(r=>{
+      const signe=r.qte>=0?'+':'';
+      const trLabel=r.tranche==='plus6'?(lang==='fr'?'+6 mois':'+6 أشهر'):(lang==='fr'?'-6 mois':'-6 أشهر');
+      const sexeLabel=r.sexe==='M'?(lang==='fr'?'Mâle':'ذكر'):(lang==='fr'?'Femelle':'أنثى');
+      return`<tr>
+        <td>${r.id}</td><td>${r.date}</td>
+        <td><span class="badge ${r.tranche==='plus6'?'bg':'bi'}">${trLabel}</span></td>
+        <td>${sexeLabel}</td>
+        <td style="text-align:center;font-weight:500;color:${r.qte>=0?'var(--green)':'var(--red)'}">${signe}${r.qte}</td>
+        <td style="font-size:11px;color:var(--text2)">${r.obs||'—'}</td>
+        <td>${adminBtn('delMvt',r.id)}</td>
+      </tr>`;
+    }).join('');
+    return`${visitorBanner()}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="card">
+        <div class="card-hd"><span class="card-tt">🐑 ${lang==='fr'?'+6 mois':'+6 أشهر'}</span><span style="font-size:18px;font-weight:700;color:var(--green)">${totalPlus}</span></div>
+        <table>
+          <thead><tr><th></th><th style="text-align:center">${lang==='fr'?'Mâles':'ذكور'}</th><th style="text-align:center">${lang==='fr'?'Femelles':'إناث'}</th><th style="text-align:center">Total</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:500">+6 mois</td><td style="text-align:center;font-size:18px;font-weight:600;color:var(--blue)">${e.mPlus}</td><td style="text-align:center;font-size:18px;font-weight:600;color:var(--green)">${e.fPlus}</td><td style="text-align:center;font-size:18px;font-weight:700">${totalPlus}</td></tr>
+          </tbody>
+        </table>
+        ${isAdmin?`<div style="display:flex;gap:8px;padding:12px">
+          <button class="btn-p" style="flex:1;font-size:11px" onclick="addMvt('plus6')"><i class="ti ti-plus"></i> ${lang==='fr'?'Ajouter':'إضافة'}</button>
+          <button class="btn-p" style="flex:1;font-size:11px;background:var(--red)" onclick="retireMvt('plus6')"><i class="ti ti-minus"></i> ${lang==='fr'?'Retirer':'إزالة'}</button>
+        </div>`:''}
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-tt">🐑 ${lang==='fr'?'-6 mois':'-6 أشهر'}</span><span style="font-size:18px;font-weight:700;color:var(--blue)">${totalMoins}</span></div>
+        <table>
+          <thead><tr><th></th><th style="text-align:center">${lang==='fr'?'Mâles':'ذكور'}</th><th style="text-align:center">${lang==='fr'?'Femelles':'إناث'}</th><th style="text-align:center">Total</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:500">-6 mois</td><td style="text-align:center;font-size:18px;font-weight:600;color:var(--blue)">${e.mMoins}</td><td style="text-align:center;font-size:18px;font-weight:600;color:var(--green)">${e.fMoins}</td><td style="text-align:center;font-size:18px;font-weight:700">${totalMoins}</td></tr>
+          </tbody>
+        </table>
+        ${isAdmin?`<div style="display:flex;gap:8px;padding:12px">
+          <button class="btn-p" style="flex:1;font-size:11px" onclick="addMvt('moins6')"><i class="ti ti-plus"></i> ${lang==='fr'?'Ajouter':'إضافة'}</button>
+          <button class="btn-p" style="flex:1;font-size:11px;background:var(--red)" onclick="retireMvt('moins6')"><i class="ti ti-minus"></i> ${lang==='fr'?'Retirer':'إزالة'}</button>
+        </div>`:''}
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hd"><span class="card-tt">📊 ${lang==='fr'?'Effectif total':'إجمالي القطيع'}</span><span style="font-size:22px;font-weight:700;color:var(--green)">${totalAll} ${lang==='fr'?'têtes':'رأس'}</span></div>
+      <table><thead><tr><th></th><th style="text-align:center">${lang==='fr'?'Mâles':'ذكور'}</th><th style="text-align:center">${lang==='fr'?'Femelles':'إناث'}</th><th style="text-align:center">Total</th></tr></thead>
+      <tbody>
+        <tr><td>+6 mois</td><td style="text-align:center">${e.mPlus}</td><td style="text-align:center">${e.fPlus}</td><td style="text-align:center;font-weight:600">${totalPlus}</td></tr>
+        <tr><td>-6 mois</td><td style="text-align:center">${e.mMoins}</td><td style="text-align:center">${e.fMoins}</td><td style="text-align:center;font-weight:600">${totalMoins}</td></tr>
+      </tbody>
+      <tfoot><tr><td>TOTAL</td><td style="text-align:center">${e.mPlus+e.mMoins}</td><td style="text-align:center">${e.fPlus+e.fMoins}</td><td style="text-align:center">${totalAll}</td></tr></tfoot>
+      </table>
+    </div>
+    ${DB.mouvements.length?`<div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Historique des mouvements':'سجل الحركات'}</span></div>
+    <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${lang==='fr'?'Tranche':'الفئة'}</th><th>${lang==='fr'?'Sexe':'الجنس'}</th><th style="text-align:center">${lang==='fr'?'Quantité':'الكمية'}</th><th>${T('obs')}</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table></div></div>`:''}`;
+  },
+  bb(){
+    const n=DB.naissances;
+    if(!n.length)return`${visitorBanner()}<div class="row-top"><span></span>${adminAddBtn('addBb',T('add'))}</div>
+      <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Registre des naissances':'سجل المواليد'}</span></div>
+      <div class="empty"><i class="ti ti-heart"></i>${lang==='fr'?'Aucune naissance enregistrée':'لا توجد مواليد'}</div></div>`;
+    const tM=n.reduce((s,x)=>s+x.m,0),tF=n.reduce((s,x)=>s+x.f,0),tMo=n.reduce((s,x)=>s+x.mort,0),tV=n.reduce((s,x)=>s+x.sol,0);
+    const rows=n.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td style="text-align:center">${r.m}</td><td style="text-align:center">${r.f}</td><td style="text-align:center;color:var(--red)">${r.mort}</td><td style="text-align:center;font-weight:600">${r.sol}</td><td><span class="${r.aid==='oui'?'aid-oui':'aid-non'}">${r.aid==='oui'?'✓ Aïd':'—'}</span></td><td style="font-size:11px;color:var(--text2)">${r.obs||'—'}</td><td>${adminBtn('delBb',r.id)}</td></tr>`).join('');
+    return`${visitorBanner()}<div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+      <div class="kcard"><div class="klabel">M ${lang==='fr'?'nés':'مواليد'}</div><div class="kval">${tM}</div></div>
+      <div class="kcard sky"><div class="klabel">F ${lang==='fr'?'nées':'مواليد'}</div><div class="kval">${tF}</div></div>
+      <div class="kcard red"><div class="klabel">${lang==='fr'?'Morts':'نفوق'}</div><div class="kval">${tMo}</div></div>
+      <div class="kcard"><div class="klabel">${lang==='fr'?'Vivants':'أحياء'}</div><div class="kval">${tV}</div></div>
+    </div>
+    <div class="row-top"><span></span>${adminAddBtn('addBb',T('add'))}</div>
+    <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Registre des naissances':'سجل المواليد'}</span></div>
+    <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>M</th><th>F</th><th>${lang==='fr'?'Morts':'نفوق'}</th><th>${lang==='fr'?'Vivants':'أحياء'}</th><th>Aïd</th><th>${T('obs')}</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="2">Totaux</td><td style="text-align:center">${tM}</td><td style="text-align:center">${tF}</td><td style="text-align:center;color:var(--red)">${tMo}</td><td style="text-align:center">${tV}</td><td colspan="3"></td></tr></tfoot>
+    </table></div></div>`;
+  },
+  dep(){
+    const moisP=[...new Set(DB.depenses.map(d=>d.mois))];
+    const grand=DB.depenses.reduce((s,x)=>s+x.mont,0);
+    if(!DB.depenses.length)return`${visitorBanner()}<div class="row-top"><span></span>${adminAddBtn('addDep',T('add'))}</div>
+      <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Dépenses':'المصاريف'}</span></div>
+      <div class="empty"><i class="ti ti-receipt"></i>${lang==='fr'?'Aucune dépense enregistrée':'لا توجد نفقات'}</div></div>`;
+    const blocks=moisP.map(mo=>{
+      const items=DB.depenses.filter(d=>d.mois===mo);
+      const tot=items.reduce((s,x)=>s+x.mont,0);
+      const rows=items.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td><span class="badge ${CAT_CLS[r.cat]||'bx'}">${r.cat}</span></td><td>${r.desc||'—'}</td><td style="text-align:right;font-weight:500">${fn(r.mont)}</td><td>${adminBtn('delDep',r.id)}</td></tr>`).join('');
+      return`<div class="card" style="margin-bottom:14px"><div class="card-hd"><span class="card-tt"><i class="ti ti-calendar"></i> ${mo}</span><span style="font-size:12px;font-weight:500;color:var(--text2)">${fn(tot)} DZD</span></div>
+      <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${T('cat')}</th><th>${T('desc')}</th><th style="text-align:right">${lang==='fr'?'Montant':'المبلغ'}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    }).join('');
+    return`${visitorBanner()}<div class="row-top"><div style="font-size:12px;color:var(--text2)">Total : <strong>${fn(grand)} DZD</strong></div>${adminAddBtn('addDep',T('add'))}</div>${blocks}`;
+  },
+  bil(){
+    const d=DB.depenses,v=DB.ventes;
+    const totDep=d.reduce((s,x)=>s+x.mont,0);
+    const totV=v.filter(x=>x.type==='VENTE').reduce((s,x)=>s+x.tot,0);
+    const totA=v.filter(x=>x.type==='ACHAT').reduce((s,x)=>s+x.tot,0);
+    const solde=getCapital()+totV-totA-totDep;
+    const rows=MOIS_LIST.map((m,i)=>{
+      const mDep=d.filter(x=>x.mois===m).reduce((s,x)=>s+x.mont,0);
+      const mV=v.filter(x=>x.type==='VENTE'&&x.mois===m).reduce((s,x)=>s+x.tot,0);
+      const mA=v.filter(x=>x.type==='ACHAT'&&x.mois===m).reduce((s,x)=>s+x.tot,0);
+      const mRes=mV-mA-mDep;
+      return`<tr><td><strong>${m}</strong></td><td style="text-align:right">${i===0?fn(getCapital()):'—'}</td><td style="text-align:right;color:var(--green)">${mV?fn(mV):'—'}</td><td style="text-align:right;color:var(--red)">${(mDep+mA)?fn(mDep+mA):'—'}</td><td style="text-align:right;font-weight:500;color:${mRes>=0?'var(--green)':'var(--red)'}">${(mV||mDep||mA)?fn(mRes):'—'}</td></tr>`;
+    }).join('');
+    const capEditBtn=isAdmin?`<button class="btn-p" style="font-size:11px;padding:5px 12px;margin-top:6px" onclick="editCapital()"><i class="ti ti-pencil"></i> ${lang==='fr'?'Modifier':'تعديل'}</button>`:'';
+    return`${visitorBanner()}<div class="fin3">
+      <div class="fcell"><div class="fclbl">${lang==='fr'?'Capital départ':'رأس المال'}</div><div class="fcval">${fn(getCapital())} <small style="font-size:11px">DZD</small>${capEditBtn}</div></div>
+      <div class="fcell"><div class="fclbl">${lang==='fr'?'Recettes':'الإيرادات'}</div><div class="fcval pos">${fn(totV)} <small style="font-size:11px">DZD</small></div></div>
+      <div class="fcell"><div class="fclbl">${lang==='fr'?'Solde actuel':'الرصيد'}</div><div class="fcval ${solde>=0?'pos':'neg'}">${fn(solde)} <small style="font-size:11px">DZD</small></div></div>
+    </div>
+    <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Bilan Juin → Décembre 2026':'الميزانية يونيو → ديسمبر 2026'}</span></div>
+    <div class="tblwrap"><table style="min-width:500px"><thead><tr><th>${T('mois')}</th><th style="text-align:right">${lang==='fr'?'Cap. début':'رأس المال'}</th><th style="text-align:right">${lang==='fr'?'Recettes':'إيرادات'}</th><th style="text-align:right">${lang==='fr'?'Dépenses':'نفقات'}</th><th style="text-align:right">${T('res')}</th></tr></thead>
+    <tbody>${rows}</tbody></table></div></div>`;
+  },
+  av(){
+    const v=DB.ventes;
+    const tV=v.filter(x=>x.type==='VENTE').reduce((s,x)=>s+x.tot,0);
+    const tA=v.filter(x=>x.type==='ACHAT').reduce((s,x)=>s+x.tot,0);
+    if(!v.length)return`${visitorBanner()}<div class="row-top"><span></span>${adminAddBtn('addAv',T('add'))}</div>
+      <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Achats & Ventes':'مشتريات ومبيعات'}</span></div>
+      <div class="empty"><i class="ti ti-arrows-exchange"></i>${lang==='fr'?'Aucune transaction enregistrée':'لا توجد معاملات'}</div></div>`;
+    const rows=v.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td><td><span class="badge ${r.type==='VENTE'?'bg':'br'}">${r.type}</span></td><td>${r.sexe==='M'?T('male'):T('fem')}</td><td style="text-align:center">${r.qte}</td><td style="text-align:right">${fn(r.pu)}</td><td style="text-align:right;font-weight:600">${fn(r.tot)}</td><td style="font-size:11px">${r.obs||'—'}</td><td>${adminBtn('delAv',r.id)}</td></tr>`).join('');
+    return`${visitorBanner()}<div class="fin3"><div class="fcell"><div class="fclbl">Ventes</div><div class="fcval pos">${fn(tV)} <small>DZD</small></div></div><div class="fcell"><div class="fclbl">Achats</div><div class="fcval neg">${fn(tA)} <small>DZD</small></div></div><div class="fcell"><div class="fclbl">Solde net</div><div class="fcval ${tV-tA>=0?'pos':'neg'}">${fn(tV-tA)} <small>DZD</small></div></div></div>
+    <div class="row-top"><span></span>${adminAddBtn('addAv',T('add'))}</div>
+    <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Registre des transactions':'سجل المعاملات'}</span></div>
+    <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${T('type')}</th><th>${T('sexe')}</th><th>${T('qte')}</th><th style="text-align:right">${T('pu')}</th><th style="text-align:right">${T('total')}</th><th>${T('obs')}</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="6">VENTES</td><td style="text-align:right;color:var(--green)">${fn(tV)}</td><td colspan="2"></td></tr><tr><td colspan="6">ACHATS</td><td style="text-align:right;color:var(--red)">${fn(tA)}</td><td colspan="2"></td></tr><tr><td colspan="6">SOLDE</td><td style="text-align:right;font-weight:600;color:${tV-tA>=0?'var(--green)':'var(--red)'}">${fn(tV-tA)}</td><td colspan="2"></td></tr></tfoot>
+    </table></div></div>`;
+  }
 };
 
-document.getElementById('addBtn').onclick=()=>openModal(null);
-document.getElementById('cancelBtn').onclick=closeModal;
-ov.onclick=e=>{if(e.target===ov)closeModal()};
-document.getElementById('saveBtn').onclick=async()=>{
-  const id=document.getElementById('editId').value;
-  const obj={
-    date:document.getElementById('f-date').value,
-    cat:document.getElementById('f-cat').value,
-    title:document.getElementById('f-title').value.trim(),
-    note:document.getElementById('f-note').value.trim(),
-    action:document.getElementById('f-action').value.trim(),
-    status:document.getElementById('f-status').value
-  };
-  if(!obj.title&&!obj.note){alert('Saisissez au moins un titre ou une note.');return}
-  setSync('load','Enregistrement…');
-  let error;
-  if(id){({error}=await sb.from('entries').update(obj).eq('id',id))}
-  else{({error}=await sb.from('entries').insert(obj))}
-  if(error){setSync('err','Erreur enregistrement');alert(error.message);return}
-  closeModal();
-  await fetchAll();
-};
+function addMvt(tranche){
+  if(!isAdmin)return;
+  const tLabel=tranche==='plus6'?(lang==='fr'?'+6 mois':'+6 أشهر'):(lang==='fr'?'-6 mois':'-6 أشهر');
+  om(lang==='fr'?`Ajouter — ${tLabel}`:`إضافة — ${tLabel}`,
+    `<div class="fgrid">
+      <div class="fgroup"><label>${T('date')}</label><input type="date" id="mv_d" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="fgroup"><label>${lang==='fr'?'Sexe':'الجنس'}</label><select id="mv_s"><option value="M">${lang==='fr'?'Mâle':'ذكر'}</option><option value="F">${lang==='fr'?'Femelle':'أنثى'}</option></select></div>
+      <div class="fgroup"><label>${lang==='fr'?'Nombre de têtes':'عدد الرؤوس'}</label><input type="number" id="mv_q" value="1" min="1"></div>
+      <div class="fgroup full"><label>${T('obs')}</label><input type="text" id="mv_o" placeholder="${lang==='fr'?'Achat, naissance...':'شراء، مواليد...'}"></div>
+    </div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svMvt('${tranche}',1)"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
+function retireMvt(tranche){
+  if(!isAdmin)return;
+  const tLabel=tranche==='plus6'?(lang==='fr'?'+6 mois':'+6 أشهر'):(lang==='fr'?'-6 mois':'-6 أشهر');
+  om(lang==='fr'?`Retirer — ${tLabel}`:`إزالة — ${tLabel}`,
+    `<div class="fgrid">
+      <div class="fgroup"><label>${T('date')}</label><input type="date" id="mv_d" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="fgroup"><label>${lang==='fr'?'Sexe':'الجنس'}</label><select id="mv_s"><option value="M">${lang==='fr'?'Mâle':'ذكر'}</option><option value="F">${lang==='fr'?'Femelle':'أنثى'}</option></select></div>
+      <div class="fgroup"><label>${lang==='fr'?'Nombre de têtes':'عدد الرؤوس'}</label><input type="number" id="mv_q" value="1" min="1"></div>
+      <div class="fgroup full"><label>${T('obs')}</label><input type="text" id="mv_o" placeholder="${lang==='fr'?'Vente, décès...':'بيع، نفوق...'}"></div>
+    </div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" style="background:var(--red)" onclick="svMvt('${tranche}',-1)"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
+function svMvt(tranche,sign){
+  const sexe=document.getElementById('mv_s').value;
+  const qte=(parseInt(document.getElementById('mv_q').value)||1)*sign;
+  const obs=document.getElementById('mv_o').value;
+  const date=document.getElementById('mv_d').value;
+  const e=DB.effectif;
+  if(tranche==='plus6'){if(sexe==='M')e.mPlus+=qte;else e.fPlus+=qte;}
+  else{if(sexe==='M')e.mMoins+=qte;else e.fMoins+=qte;}
+  e.mPlus=Math.max(0,e.mPlus);e.fPlus=Math.max(0,e.fPlus);
+  e.mMoins=Math.max(0,e.mMoins);e.fMoins=Math.max(0,e.fMoins);
+  const mvts=DB.mouvements;
+  const lastId=mvts.length?mvts[mvts.length-1].id:0;
+  mvts.push({id:lastId+1,date,tranche,sexe,qte,obs});
+  sv('eff',DB.effectif);sv('mvt',DB.mouvements);cm();go('ch');
+}
+function delMvt(id){
+  if(!isAdmin)return;
+  if(confirm(lang==='fr'?'Supprimer ce mouvement ? L\'effectif sera recalculé.':'حذف هذه الحركة؟')){
+    const mvt=DB.mouvements.find(x=>x.id===id);
+    if(mvt){
+      const e=DB.effectif;
+      if(mvt.tranche==='plus6'){if(mvt.sexe==='M')e.mPlus-=mvt.qte;else e.fPlus-=mvt.qte;}
+      else{if(mvt.sexe==='M')e.mMoins-=mvt.qte;else e.fMoins-=mvt.qte;}
+      e.mPlus=Math.max(0,e.mPlus);e.fPlus=Math.max(0,e.fPlus);
+      e.mMoins=Math.max(0,e.mMoins);e.fMoins=Math.max(0,e.fMoins);
+      DB.mouvements=DB.mouvements.filter(x=>x.id!==id);
+      sv('eff',DB.effectif);sv('mvt',DB.mouvements);go('ch');
+    }
+  }
+}
+function addCh(){if(!isAdmin)return;addMvt('plus6');}
+function svCh(){}
+function delCh(id){delMvt(id);}
 
-['search','filterCat','filterStatus'].forEach(i=>document.getElementById(i).addEventListener('input',render));
+function addBb(){
+  if(!isAdmin)return;
+  om(lang==='fr'?'Nouvelle naissance':'تسجيل ولادة',
+    `<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fb_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mâles':'ذكور'}</label><input type="number" id="fb_m" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Femelles':'إناث'}</label><input type="number" id="fb_f" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Morts':'نفوق'}</label><input type="number" id="fb_mo" value="0" min="0"></div><div class="fgroup"><label>${lang==='fr'?'Éligible Aïd':'أهل للعيد'}</label><select id="fb_aid"><option value="non">Non</option><option value="oui">Oui</option></select></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fb_o"></div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svBb()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
+function svBb(){const m=parseInt(document.getElementById('fb_m').value)||0;const f=parseInt(document.getElementById('fb_f').value)||0;const mo=parseInt(document.getElementById('fb_mo').value)||0;const d=DB.naissances,l=d[d.length-1]||{id:0};d.push({id:l.id+1,date:document.getElementById('fb_d').value,m,f,mort:mo,sol:m+f-mo,aid:document.getElementById('fb_aid').value,obs:document.getElementById('fb_o').value});sv('bb',DB.naissances);cm();go('bb');}
+function delBb(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.naissances=DB.naissances.filter(x=>x.id!==id);sv('bb',DB.naissances);go('bb');}}
 
-document.getElementById('exportBtn').onclick=()=>{
-  if(!data.length){alert('Aucune entrée à exporter.');return}
-  const head=['Date','Catégorie','Titre','Note','Action','Statut'];
-  const rows=[...data].sort((a,b)=>(a.date||'').localeCompare(b.date||''))
-    .map(e=>[e.date,e.cat,e.title,e.note,e.action,e.status]
-    .map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(';'));
-  const csv='\uFEFF'+[head.join(';'),...rows].join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='journal_omar_'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();
-};
+function addDep(){
+  if(!isAdmin)return;
+  const mopts=MOIS_LIST.map(m=>`<option>${m}</option>`).join('');
+  const copts=CATS.map(c=>`<option>${c}</option>`).join('');
+  om(lang==='fr'?'Nouvelle dépense':'مصروف جديد',
+    `<div class="fgrid"><div class="fgroup"><label>${lang==='fr'?'Mois':'الشهر'}</label><select id="fd_m">${mopts}</select></div><div class="fgroup"><label>${T('date')}</label><input type="date" id="fd_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${T('cat')}</label><select id="fd_c">${copts}</select></div><div class="fgroup"><label>${lang==='fr'?'Montant (DZD)':'المبلغ (دج)'}</label><input type="number" id="fd_mo" value="0" min="0"></div><div class="fgroup full"><label>${T('desc')}</label><input type="text" id="fd_de"></div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svDep()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
+function svDep(){const d=DB.depenses,l=d[d.length-1]||{id:0};d.push({id:l.id+1,mois:document.getElementById('fd_m').value,date:document.getElementById('fd_d').value,cat:document.getElementById('fd_c').value,desc:document.getElementById('fd_de').value,mont:parseInt(document.getElementById('fd_mo').value)||0});sv('dep',DB.depenses);cm();go('dep');}
+function delDep(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.depenses=DB.depenses.filter(x=>x.id!==id);sv('dep',DB.depenses);go('dep');}}
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+function addAv(){
+  if(!isAdmin)return;
+  const mopts=MOIS_LIST.map(m=>`<option>${m}</option>`).join('');
+  om(lang==='fr'?'Nouvelle transaction':'معاملة جديدة',
+    `<div class="fgrid"><div class="fgroup"><label>${T('date')}</label><input type="date" id="fv_d" value="${new Date().toISOString().slice(0,10)}"></div><div class="fgroup"><label>${lang==='fr'?'Mois':'الشهر'}</label><select id="fv_m">${mopts}</select></div><div class="fgroup"><label>${T('type')}</label><select id="fv_t"><option>VENTE</option><option>ACHAT</option></select></div><div class="fgroup"><label>${T('sexe')}</label><select id="fv_s"><option value="M">${T('male')}</option><option value="F">${T('fem')}</option></select></div><div class="fgroup"><label>${T('qte')}</label><input type="number" id="fv_q" value="1" min="1"></div><div class="fgroup"><label>${T('pu')} (DZD)</label><input type="number" id="fv_p" value="0" min="0"></div><div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fv_o"></div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button><button class="btn-p" onclick="svAv()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
+function svAv(){const q=parseInt(document.getElementById('fv_q').value)||1;const p=parseInt(document.getElementById('fv_p').value)||0;const d=DB.ventes,l=d[d.length-1]||{id:0};d.push({id:l.id+1,date:document.getElementById('fv_d').value,mois:document.getElementById('fv_m').value,type:document.getElementById('fv_t').value,sexe:document.getElementById('fv_s').value,qte:q,pu:p,tot:q*p,obs:document.getElementById('fv_o').value});sv('av',DB.ventes);cm();go('av');}
+function delAv(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟')){DB.ventes=DB.ventes.filter(x=>x.id!==id);sv('av',DB.ventes);go('av');}}
 
-// Synchronisation temps réel : recharge dès qu'un autre appareil modifie la base
-sb.channel('entries-rt')
-  .on('postgres_changes',{event:'*',schema:'public',table:'entries'},()=>fetchAll())
-  .subscribe();
+function toggleLang(){
+  lang=lang==='fr'?'ar':'fr';
+  document.body.classList.toggle('rtl',lang==='ar');
+  document.getElementById('langBtnTxt').textContent=lang==='fr'?'عربي':'Français';
+  document.getElementById('logoSub').textContent=lang==='ar'?'إدارة القطيع':'Gestion Cheptel';
+  document.querySelectorAll('[data-fr]').forEach(el=>el.textContent=lang==='fr'?el.dataset.fr:el.dataset.ar);
+  updateModeUI();
+  go(CP);
+}
 
-fetchAll();
+go('db');
+
+function editCapital(){
+  if(!isAdmin)return;
+  const cur=getCapital();
+  om(lang==='fr'?'Modifier le capital de départ':'تعديل رأس المال',
+    `<div class="fgrid"><div class="fgroup full">
+      <label>${lang==='fr'?'Capital de départ (DZD)':'رأس المال الابتدائي (دج)'}</label>
+      <input type="number" id="cap_val" value="${cur}" min="0" style="font-size:16px;font-weight:600;text-align:right">
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">${lang==='fr'?'Valeur actuelle :':'القيمة الحالية :'} <strong>${fn(cur)} DZD</strong></div>
+    </div></div>`,
+    `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button>
+     <button class="btn-p" style="background:var(--amber)" onclick="resetCapital()"><i class="ti ti-refresh"></i> ${lang==='fr'?'Reset 340 000':'إعادة تعيين'}</button>
+     <button class="btn-p" onclick="saveCapital()"><i class="ti ti-check"></i> ${T('save')}</button>`);
+}
+function saveCapital(){
+  const val=parseInt(document.getElementById('cap_val').value)||0;
+  setCapital(val);cm();go('bil');
+}
+function resetCapital(){
+  if(confirm(lang==='fr'?'Réinitialiser le capital à 340 000 DZD ?':'إعادة تعيين رأس المال إلى 340,000 دج؟')){
+    setCapital(340000);cm();go('bil');
+  }
+}
 </script>
 </body>
 </html>
