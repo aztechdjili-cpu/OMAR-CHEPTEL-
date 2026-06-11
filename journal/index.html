@@ -295,10 +295,10 @@ const CAT_CLS={Alimentation:'bg',Vétérinaire:'bi',Transport:'ba',Infrastructur
 const CAT_C={Alimentation:'#3B6D11',Vétérinaire:'#185FA5',Transport:'#854F0B',Infrastructure:'#BA7517',Personnel:'#533AB7',Divers:'#888780'};
 
 const DC={
-  cheptel:[{id:1,date:'01/06/2026',obs:'Cheptel de départ — post-Aïd',mA:4,fA:35,tot:70,cum:70}],
+  cheptel:[],
   naissances:[],depenses:[],ventes:[],
   // Effectif par tranche : {mPlus:M+6mois, fPlus:F+6mois, mMoins:M-6mois, fMoins:F-6mois}
-  effectif:{mPlus:4,fPlus:35,mMoins:10,fMoins:21},
+  effectif:{mPlus:0,fPlus:0,mMoins:0,fMoins:0},
   mouvements:[{id:1,date:'01/06/2026',tranche:'plus6',sexe:'M',qte:4,type:'init',obs:'Mâles adultes départ'}],
 };
 function load(){return{
@@ -306,7 +306,7 @@ function load(){return{
   naissances:JSON.parse(localStorage.getItem('op_bb')||'null')||[...DC.naissances],
   depenses:JSON.parse(localStorage.getItem('op_dep')||'null')||[...DC.depenses],
   ventes:JSON.parse(localStorage.getItem('op_av')||'null')||[...DC.ventes],
-  effectif:JSON.parse(localStorage.getItem('op_eff')||'null')||{mPlus:4,fPlus:35,mMoins:10,fMoins:21},
+  effectif:JSON.parse(localStorage.getItem('op_eff')||'null')||{mPlus:0,fPlus:0,mMoins:0,fMoins:0},
   mouvements:JSON.parse(localStorage.getItem('op_mvt')||'null')||[],
 };}
 function sv(k,d){localStorage.setItem('op_'+k,JSON.stringify(d));}
@@ -347,7 +347,6 @@ const PAGES={
     const totA=v.filter(x=>x.type==='ACHAT').reduce((s,x)=>s+x.tot,0);
     const totN=n.reduce((s,x)=>s+x.m+x.f,0);
     const totMo=n.reduce((s,x)=>s+x.mort,0);
-    const effectif=DB.cheptel.length?DB.cheptel[DB.cheptel.length-1].cum:70;
     const solde=getCapital()+totV-totA-totDep;
     const cats=CATS.filter(c=>c!=='Personnel');
     const catT=cats.map(c=>d.filter(x=>x.cat===c).reduce((s,x)=>s+x.mont,0));
@@ -368,12 +367,10 @@ const PAGES={
       <div class="card"><div class="card-hd"><span class="card-tt"><i class="ti ti-users"></i> ${lang==='fr'?'Composition cheptel':'تركيبة القطيع'}</span></div>
       <table><thead><tr><th>${lang==='fr'?'Catégorie':'الفئة'}</th><th style="text-align:right">M</th><th style="text-align:right">F</th><th style="text-align:right">Total</th></tr></thead>
       <tbody>
-        <tr><td>${lang==='fr'?'Adultes ≥9 mois':'بالغون'}</td><td style="text-align:right">4</td><td style="text-align:right">35</td><td style="text-align:right;font-weight:500">39</td></tr>
-        <tr><td>${lang==='fr'?'Agneaux 6-9 mois':'6-9 أشهر'}</td><td style="text-align:right">4</td><td style="text-align:right">5</td><td style="text-align:right;font-weight:500">9</td></tr>
-        <tr><td>${lang==='fr'?'Agneaux 3-6 mois':'3-6 أشهر'}</td><td style="text-align:right">9</td><td style="text-align:right">8</td><td style="text-align:right;font-weight:500">17</td></tr>
-        <tr><td>${lang==='fr'?'Agneaux 0-3 mois':'0-3 أشهر'}</td><td style="text-align:right">3</td><td style="text-align:right">2</td><td style="text-align:right;font-weight:500">5</td></tr>
+        <tr><td>+6 mois</td><td style="text-align:right">${e.mPlus}</td><td style="text-align:right">${e.fPlus}</td><td style="text-align:right;font-weight:500">${e.mPlus+e.fPlus}</td></tr>
+        <tr><td>-6 mois</td><td style="text-align:right">${e.mMoins}</td><td style="text-align:right">${e.fMoins}</td><td style="text-align:right;font-weight:500">${e.mMoins+e.fMoins}</td></tr>
       </tbody>
-      <tfoot><tr><td>TOTAL</td><td style="text-align:right">20</td><td style="text-align:right">50</td><td style="text-align:right">70</td></tr></tfoot>
+      <tfoot><tr><td>TOTAL</td><td style="text-align:right">${e.mPlus+e.mMoins}</td><td style="text-align:right">${e.fPlus+e.fMoins}</td><td style="text-align:right">${effectif}</td></tr></tfoot>
       </table></div>
     </div>`;
   },
