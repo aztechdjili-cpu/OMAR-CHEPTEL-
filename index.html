@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -139,6 +138,9 @@ input:focus,select:focus{border-color:var(--blue)}
   .fgrid{grid-template-columns:1fr}
 }
 </style>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -289,7 +291,7 @@ function visitorBanner(){
 
 const CAPITAL_DEPART_DEFAULT=340000;
 function getCapital(){return parseInt(localStorage.getItem("op_capital")||CAPITAL_DEPART_DEFAULT);}
-function setCapital(v){localStorage.setItem("op_capital",v);}
+function setCapital(v){localStorage.setItem("op_capital",v);fbdb.ref("omar/capital").set(v);}
 const MOIS_LIST=['Juin 2026','Juillet 2026','Août 2026','Septembre 2026','Octobre 2026','Novembre 2026','Décembre 2026'];
 const CATS=['Alimentation','Vétérinaire','Transport','Infrastructure','Personnel','Divers'];
 const CAT_CLS={Alimentation:'bg',Vétérinaire:'bi',Transport:'ba',Infrastructure:'bx',Personnel:'bi',Divers:'bx'};
@@ -302,16 +304,58 @@ const DC={
   effectif:{mPlus:0,fPlus:0,mMoins:0,fMoins:0},
   mouvements:[{id:1,date:'01/06/2026',tranche:'plus6',sexe:'M',qte:4,type:'init',obs:'Mâles adultes départ'}],
 };
-function load(){return{
-  cheptel:JSON.parse(localStorage.getItem('op_ch')||'null')||[...DC.cheptel],
-  naissances:JSON.parse(localStorage.getItem('op_bb')||'null')||[...DC.naissances],
-  depenses:JSON.parse(localStorage.getItem('op_dep')||'null')||[...DC.depenses],
-  ventes:JSON.parse(localStorage.getItem('op_av')||'null')||[...DC.ventes],
-  effectif:JSON.parse(localStorage.getItem('op_eff')||'null')||{mPlus:0,fPlus:0,mMoins:0,fMoins:0},
-  mouvements:JSON.parse(localStorage.getItem('op_mvt')||'null')||[],
-};}
-function sv(k,d){localStorage.setItem('op_'+k,JSON.stringify(d));}
-let DB=load();
+// ── FIREBASE CONFIG ──
+const firebaseConfig = {
+  apiKey: "AIzaSyBfCEB-FTKxDNxXeOQXH4IzTfwobKiNc9Q",
+  authDomain: "omar-cheptel.firebaseapp.com",
+  databaseURL: "https://omar-cheptel-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "omar-cheptel",
+  storageBucket: "omar-cheptel.firebasestorage.app",
+  messagingSenderId: "559496216411",
+  appId: "1:559496216411:web:49fba8d7a211733d25e47e",
+  measurementId: "G-HSPZBSHD10"
+};
+firebase.initializeApp(firebaseConfig);
+const fbdb = firebase.database();
+
+// ── LOCAL DB (updated by Firebase listeners) ──
+let DB={
+  cheptel:[],naissances:[],depenses:[],ventes:[],
+  effectif:{mPlus:0,fPlus:0,mMoins:0,fMoins:0},
+  mouvements:[],
+};
+let DB_READY=false;
+
+// ── SAVE TO FIREBASE ──
+function sv(k,d){
+  fbdb.ref('omar/'+k).set(d);
+}
+function svCapital(v){
+  fbdb.ref('omar/capital').set(v);
+}
+
+// ── FIREBASE LISTENERS (sync temps réel) ──
+const KEYS=['cheptel','naissances','depenses','ventes','effectif','mouvements'];
+let loadedKeys=new Set();
+KEYS.forEach(k=>{
+  fbdb.ref('omar/'+k).on('value', snap=>{
+    const val=snap.val();
+    if(val!==null) DB[k]=Array.isArray(val)?val:(typeof val==='object'?val:{});
+    else if(k==='effectif') DB[k]={mPlus:0,fPlus:0,mMoins:0,fMoins:0};
+    else DB[k]=[];
+    loadedKeys.add(k);
+    if(loadedKeys.size===KEYS.length&&!DB_READY){
+      DB_READY=true;
+      go('db');
+    } else if(DB_READY){
+      go(CP);
+    }
+  });
+});
+fbdb.ref('omar/capital').on('value', snap=>{
+  const val=snap.val();
+  if(val!==null) localStorage.setItem('op_capital', val);
+});
 
 function cm(){document.getElementById('moverlay').classList.remove('open');}
 function om(title,body,footer){
