@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -642,9 +643,24 @@ function svBb(){
   const m=parseInt(document.getElementById('fb_m').value)||0;
   const f=parseInt(document.getElementById('fb_f').value)||0;
   const mo=parseInt(document.getElementById('fb_mo').value)||0;
+  const date=document.getElementById('fb_d').value;
+  const mVivants=Math.max(0,m-Math.max(0,mo-f));
+  const fVivants=Math.max(0,f-Math.max(0,mo-m));
   const arr=toArr(DATA.naissances);
-  arr.push({id:nextId(arr),date:document.getElementById('fb_d').value,m,f,mort:mo,sol:m+f-mo,aid:document.getElementById('fb_aid').value,obs:document.getElementById('fb_o').value});
-  save('naissances',arr);cm();
+  arr.push({id:nextId(arr),date,m,f,mort:mo,sol:m+f-mo,aid:document.getElementById('fb_aid').value,obs:document.getElementById('fb_o').value});
+  save('naissances',arr);
+  // MAJ cheptel -6 mois automatique
+  if(mVivants>0||fVivants>0){
+    const e={...DATA.effectif};
+    e.mMoins=Math.max(0,(e.mMoins||0)+mVivants);
+    e.fMoins=Math.max(0,(e.fMoins||0)+fVivants);
+    save('effectif',e);
+    const mvts=toArr(DATA.mouvements);
+    if(mVivants>0) mvts.push({id:nextId(mvts),date,tranche:'moins6',sexe:'M',qte:mVivants,obs:'Naissance'});
+    if(fVivants>0) mvts.push({id:nextId(mvts)+(mVivants>0?1:0),date,tranche:'moins6',sexe:'F',qte:fVivants,obs:'Naissance'});
+    save('mouvements',mvts);
+  }
+  cm();
 }
 function delBb(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟'))save('naissances',toArr(DATA.naissances).filter(x=>x.id!==id));}
 
@@ -684,6 +700,7 @@ function addAv(){
       <div class="fgroup"><label>${lang==='fr'?'Mois':'الشهر'}</label><select id="fv_m">${mopts}</select></div>
       <div class="fgroup"><label>${T('type')}</label><select id="fv_t"><option>VENTE</option><option>ACHAT</option></select></div>
       <div class="fgroup"><label>Sexe</label><select id="fv_s"><option value="M">${T('male')}</option><option value="F">${T('fem')}</option></select></div>
+      <div class="fgroup"><label>${lang==='fr'?'Tranche âge':'الفئة العمرية'}</label><select id="fv_tr"><option value="plus6">+6 mois</option><option value="moins6">-6 mois</option></select></div>
       <div class="fgroup"><label>${T('qte')}</label><input type="number" id="fv_q" value="1" min="1"></div>
       <div class="fgroup"><label>${T('pu')} (DZD)</label><input type="number" id="fv_p" value="0" min="0"></div>
       <div class="fgroup full"><label>${T('obs')}</label><input type="text" id="fv_o"></div>
@@ -693,9 +710,24 @@ function addAv(){
 function svAv(){
   const q=parseInt(document.getElementById('fv_q').value)||1;
   const p=parseInt(document.getElementById('fv_p').value)||0;
+  const type=document.getElementById('fv_t').value;
+  const sexe=document.getElementById('fv_s').value;
+  const tranche=document.getElementById('fv_tr').value;
+  const date=document.getElementById('fv_d').value;
+  const obs=document.getElementById('fv_o').value;
   const arr=toArr(DATA.ventes);
-  arr.push({id:nextId(arr),date:document.getElementById('fv_d').value,mois:document.getElementById('fv_m').value,type:document.getElementById('fv_t').value,sexe:document.getElementById('fv_s').value,qte:q,pu:p,tot:q*p,obs:document.getElementById('fv_o').value});
-  save('ventes',arr);cm();
+  arr.push({id:nextId(arr),date,mois:document.getElementById('fv_m').value,type,sexe,tranche,qte:q,pu:p,tot:q*p,obs});
+  save('ventes',arr);
+  // MAJ cheptel automatique
+  const e={...DATA.effectif};
+  const delta=type==='ACHAT'?q:-q;
+  if(tranche==='plus6'){if(sexe==='M')e.mPlus=Math.max(0,(e.mPlus||0)+delta);else e.fPlus=Math.max(0,(e.fPlus||0)+delta);}
+  else{if(sexe==='M')e.mMoins=Math.max(0,(e.mMoins||0)+delta);else e.fMoins=Math.max(0,(e.fMoins||0)+delta);}
+  save('effectif',e);
+  const mvts=toArr(DATA.mouvements);
+  mvts.push({id:nextId(mvts),date,tranche,sexe,qte:delta,obs:type+' — '+obs});
+  save('mouvements',mvts);
+  cm();
 }
 function delAv(id){if(!isAdmin)return;if(confirm(lang==='fr'?'Supprimer ?':'حذف؟'))save('ventes',toArr(DATA.ventes).filter(x=>x.id!==id));}
 
