@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -222,12 +221,13 @@ let DATA = {
   depenses: [],
   ventes: [],
   capital: 340000,
+  historique_capital: [],
 };
 
 // ══════════════════════════════════════════
 // FIREBASE SYNC — écoute temps réel
 // ══════════════════════════════════════════
-const REFS = ['effectif','mouvements','naissances','depenses','ventes','capital'];
+const REFS = ['effectif','mouvements','naissances','depenses','ventes','capital','historique_capital'];
 let loaded = {};
 REFS.forEach(k => { loaded[k] = false; });
 
@@ -532,7 +532,25 @@ const PAGES = {
     </div>
     <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Bilan Juin → Décembre 2026':'الميزانية يونيو → ديسمبر 2026'}</span></div>
     <div class="tblwrap"><table style="min-width:500px"><thead><tr><th>${T('mois')}</th><th style="text-align:right">${lang==='fr'?'Cap. début':'رأس المال'}</th><th style="text-align:right">${lang==='fr'?'Recettes':'إيرادات'}</th><th style="text-align:right">${lang==='fr'?'Dépenses':'نفقات'}</th><th style="text-align:right">${T('res')}</th></tr></thead>
-    <tbody>${rows}</tbody></table></div></div>`;
+    <tbody>${rows}</tbody></table></div></div>
+    ${(()=>{
+      const hist=toArr(DATA.historique_capital);
+      if(!hist.length) return '';
+      const typeLabel={ajout:lang==='fr'?'Ajout':'إضافة',retrait:lang==='fr'?'Retrait':'سحب',correction:lang==='fr'?'Correction':'تصحيح'};
+      const typeClass={ajout:'bg',retrait:'br',correction:'ba'};
+      const histRows=hist.map(h=>`<tr>
+        <td>${h.id}</td><td>${h.date}</td>
+        <td><span class="badge ${typeClass[h.type]||'bx'}">${typeLabel[h.type]||h.type}</span></td>
+        <td style="text-align:right">${fn(h.avant||0)}</td>
+        <td style="text-align:right;font-weight:600;color:${h.type==='ajout'?'var(--green)':'var(--red)'}">${h.type==='ajout'?'+':h.type==='retrait'?'-':'='}${fn(h.montant||0)}</td>
+        <td style="text-align:right;font-weight:600">${fn(h.apres||0)}</td>
+        <td style="font-size:11px;color:var(--text2)">${h.obs||'—'}</td>
+        <td>${adminBtn('delCapHist',h.id)}</td>
+      </tr>`).join('');
+      return \`<div class="card"><div class="card-hd"><span class="card-tt"><i class="ti ti-history"></i> \${lang==='fr'?'Historique du capital':'سجل رأس المال'}</span></div>
+      <div class="tblwrap"><table><thead><tr><th>N°</th><th>\${T('date')}</th><th>\${lang==='fr'?'Type':'النوع'}</th><th style="text-align:right">\${lang==='fr'?'Avant':'قبل'}</th><th style="text-align:right">\${lang==='fr'?'Mouvement':'الحركة'}</th><th style="text-align:right">\${lang==='fr'?'Après':'بعد'}</th><th>\${T('obs')}</th><th></th></tr></thead>
+      <tbody>\${histRows}</tbody></table></div></div>\`;
+    })()}`;
   },
 
   av(){
@@ -738,17 +756,47 @@ function editCapital(){
   if(!isAdmin)return;
   const cur=DATA.capital||340000;
   om(lang==='fr'?'Modifier le capital':'تعديل رأس المال',
-    `<div class="fgrid"><div class="fgroup full">
-      <label>${lang==='fr'?'Capital de départ (DZD)':'رأس المال (دج)'}</label>
-      <input type="number" id="cap_val" value="${cur}" min="0" style="font-size:16px;font-weight:600;text-align:right">
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">${lang==='fr'?'Valeur actuelle :':'القيمة الحالية :'} <strong>${fn(cur)} DZD</strong></div>
-    </div></div>`,
+    `<div class="fgrid">
+      <div class="fgroup"><label>${lang==='fr'?'Date':'التاريخ'}</label><input type="date" id="cap_date" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="fgroup"><label>${lang==='fr'?'Type':'النوع'}</label><select id="cap_type"><option value="ajout">${lang==='fr'?'Ajout de capital':'إضافة رأس مال'}</option><option value="retrait">${lang==='fr'?'Retrait':'سحب'}</option><option value="correction">${lang==='fr'?'Correction':'تصحيح'}</option></select></div>
+      <div class="fgroup"><label>${lang==='fr'?'Montant (DZD)':'المبلغ (دج)'}</label><input type="number" id="cap_val" value="0" min="0" style="font-size:15px;font-weight:600;text-align:right"></div>
+      <div class="fgroup"><label>${lang==='fr'?'Motif':'السبب'}</label><input type="text" id="cap_obs" placeholder="${lang==='fr'?'Ex: Apport personnel, remboursement...':'مثال: إضافة شخصية...'}"></div>
+      <div class="fgroup full" style="background:var(--bg);padding:10px;border-radius:var(--r);border:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--text3)">${lang==='fr'?'Capital actuel :':'رأس المال الحالي :'} <strong>${fn(cur)} DZD</strong></div>
+      </div>
+    </div>`,
     `<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> ${T('cancel')}</button>
-     <button class="btn-p" style="background:var(--amber)" onclick="resetCapital()"><i class="ti ti-refresh"></i> Reset 340 000</button>
      <button class="btn-p" onclick="saveCapital()"><i class="ti ti-check"></i> ${T('save')}</button>`);
 }
-function saveCapital(){save('capital',parseInt(document.getElementById('cap_val').value)||0);cm();}
-function resetCapital(){if(confirm('Réinitialiser à 340 000 DZD ?')){save('capital',340000);cm();}}
+function saveCapital(){
+  const type=document.getElementById('cap_type').value;
+  const montant=parseInt(document.getElementById('cap_val').value)||0;
+  const obs=document.getElementById('cap_obs').value;
+  const date=document.getElementById('cap_date').value;
+  const cur=DATA.capital||340000;
+  let nouveau;
+  if(type==='ajout') nouveau=cur+montant;
+  else if(type==='retrait') nouveau=Math.max(0,cur-montant);
+  else nouveau=montant; // correction = valeur directe
+  save('capital',nouveau);
+  // Enregistrer dans historique
+  const hist=toArr(DATA.historique_capital);
+  hist.push({id:nextId(hist),date,type,montant,avant:cur,apres:nouveau,obs});
+  save('historique_capital',hist);
+  cm();
+}
+function delCapHist(id){
+  if(!isAdmin)return;
+  if(!confirm(lang==='fr'?'Supprimer cet enregistrement ?':'حذف هذا السجل؟'))return;
+  save('historique_capital',toArr(DATA.historique_capital).filter(x=>x.id!==id));
+}
+function resetCapital(){if(confirm('Réinitialiser à 340 000 DZD ?')){
+  const cur=DATA.capital||340000;
+  const hist=toArr(DATA.historique_capital);
+  hist.push({id:nextId(hist),date:new Date().toISOString().slice(0,10),type:'correction',montant:340000,avant:cur,apres:340000,obs:'Réinitialisation'});
+  save('historique_capital',hist);
+  save('capital',340000);cm();
+}}
 
 // ══════════════════════════════════════════
 // LANGUE
