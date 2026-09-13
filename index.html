@@ -160,7 +160,7 @@ input:focus,select:focus{border-color:var(--blue)}
       <button class="hamburger" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
       <div>
         <div class="page-title" id="ptitle">Tableau de bord</div>
-        <div class="page-sub" id="psub">Vue d'ensemble — Juin 2026</div>
+        <div class="page-sub" id="psub">Vue d'ensemble — Septembre 2026</div>
       </div>
     </div>
   </div>
@@ -263,11 +263,11 @@ function save(key, val) {
 // HELPERS
 // ══════════════════════════════════════════
 const META = {
-  db:{fr:'Tableau de bord',ar:'لوحة القيادة',sf:'Vue d\'ensemble',sa:'نظرة عامة'},
+  db:{fr:'Tableau de bord',ar:'لوحة القيادة',sf:'Vue d\'ensemble — Septembre 2026',sa:'نظرة عامة — سبتمبر 2026'},
   ch:{fr:'Registre cheptel',ar:'سجل القطيع',sf:'Effectifs et mouvements',sa:'الأعداد والحركات'},
   bb:{fr:'Gestion naissances',ar:'إدارة المواليد',sf:'Registre des agneaux',sa:'سجل الحملان'},
   dep:{fr:'Dépenses',ar:'المصاريف',sf:'Suivi par catégorie',sa:'متابعة حسب الفئة'},
-  bil:{fr:'Bilan financier',ar:'الميزانية المالية',sf:'Résultats mensuels',sa:'النتائج الشهرية'},
+  bil:{fr:'Bilan financier',ar:'الميزانية المالية',sf:'Résultats Sept → Déc 2026',sa:'النتائج سبت → ديس 2026'},
   av:{fr:'Achats & Ventes',ar:'مشتريات ومبيعات',sf:'Registre des transactions',sa:'سجل المعاملات'},
 };
 function T(k){return({
@@ -286,7 +286,7 @@ function nextId(arr){const a=toArr(arr);return a.length?Math.max(...a.map(x=>x.i
 const CATS=['Alimentation','Vétérinaire','Transport','Infrastructure','Personnel','Divers'];
 const CAT_CLS={Alimentation:'bg',Vétérinaire:'bi',Transport:'ba',Infrastructure:'bx',Personnel:'bi',Divers:'bx'};
 const CAT_C={Alimentation:'#3B6D11',Vétérinaire:'#185FA5',Transport:'#854F0B',Infrastructure:'#BA7517',Personnel:'#533AB7',Divers:'#888780'};
-const MOIS_LIST=['Juin 2026','Juillet 2026','Août 2026','Septembre 2026','Octobre 2026','Novembre 2026','Décembre 2026'];
+const MOIS_LIST=['Septembre 2026','Octobre 2026','Novembre 2026','Décembre 2026'];
 
 function visitorBanner(){
   if(isAdmin) return '';
@@ -582,7 +582,7 @@ const PAGES = {
       <div class="fcell"><div class="fclbl">${lang==='fr'?'Recettes':'إيرادات'}</div><div class="fcval pos">${fn(totV)} <small style="font-size:11px">DZD</small></div></div>
       <div class="fcell"><div class="fclbl">${lang==='fr'?'Solde actuel':'الرصيد'}</div><div class="fcval ${solde>=0?'pos':'neg'}">${fn(solde)} <small style="font-size:11px">DZD</small></div></div>
     </div>
-    <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Bilan Juin → Décembre 2026':'الميزانية يونيو → ديسمبر 2026'}</span></div>
+    <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Bilan Septembre → Décembre 2026':'الميزانية سبتمبر → ديسمبر 2026'}</span></div>
     <div class="tblwrap"><table style="min-width:500px"><thead><tr><th>${T('mois')}</th><th style="text-align:right">${lang==='fr'?'Cap. début':'رأس المال'}</th><th style="text-align:right">${lang==='fr'?'Recettes':'إيرادات'}</th><th style="text-align:right">${lang==='fr'?'Dépenses':'نفقات'}</th><th style="text-align:right">${T('res')}</th></tr></thead>
     <tbody>${rows}</tbody></table></div></div>
     ${buildCapitalHist()}`;
