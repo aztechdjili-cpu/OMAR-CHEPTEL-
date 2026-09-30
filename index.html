@@ -508,6 +508,11 @@ const PAGES = {
       <tfoot><tr><td>TOTAL</td><td style="text-align:center">${(e.mPlus||0)+(e.mMoins||0)}</td><td style="text-align:center">${(e.fPlus||0)+(e.fMoins||0)}</td><td style="text-align:center">${totalAll}</td></tr></tfoot>
       </table>
     </div>
+    ${isAdmin?`<div style="margin-bottom:16px">
+      <button class="btn-p" style="background:var(--red);width:100%" onclick="declarerDeces()">
+        <i class="ti ti-skull"></i> ${lang==='fr'?'Déclarer un décès':'تسجيل نفوق'}
+      </button>
+    </div>`:''}
     ${mvts.length?`<div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Historique mouvements':'سجل الحركات'}</span></div>
     <div class="tblwrap"><table><thead><tr><th>N°</th><th>${T('date')}</th><th>${lang==='fr'?'Tranche':'الفئة'}</th><th>Sexe</th><th style="text-align:center">${T('qte')}</th><th>${T('obs')}</th><th></th></tr></thead>
     <tbody>${rows}</tbody></table></div></div>`:''}`;
@@ -719,6 +724,36 @@ function svMvt(tranche,sign){
   save('mouvements',mvts);
   cm();
 }
+function declarerDeces(){
+  if(!isAdmin) return;
+  om(lang==='fr'?'Déclarer un décès':'تسجيل نفوق',
+    '<div class="fgrid">'
+    +'<div class="fgroup"><label>'+T('date')+'</label><input type="date" id="dc_d" value="'+new Date().toISOString().slice(0,10)+'"></div>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?'Tranche':'الفئة')+'</label><select id="dc_tr"><option value="moins6">-6 mois</option><option value="plus6">+6 mois</option></select></div>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?'Sexe':'الجنس')+'</label><select id="dc_s"><option value="M">'+(lang==='fr'?'Mâle':'ذكر')+'</option><option value="F">'+(lang==='fr'?'Femelle':'أنثى')+'</option></select></div>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?'Nombre de décès':'عدد النفوق')+'</label><input type="number" id="dc_q" value="1" min="1"></div>'
+    +'<div class="fgroup full"><label>'+(lang==='fr'?'Cause / Observation':'السبب / ملاحظة')+'</label><input type="text" id="dc_o" placeholder="'+(lang==='fr'?'Ex: Maladie, accident...':'مثال: مرض، حادث...')+'"></div>'
+    +'</div>',
+    '<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> '+T('cancel')+'</button>'
+    +'<button class="btn-p" style="background:var(--red)" onclick="svDeces()"><i class="ti ti-check"></i> '+T('save')+'</button>'
+  );
+}
+function svDeces(){
+  const tranche=document.getElementById('dc_tr').value;
+  const sexe=document.getElementById('dc_s').value;
+  const qte=parseInt(document.getElementById('dc_q').value)||1;
+  const date=document.getElementById('dc_d').value;
+  const obs=document.getElementById('dc_o').value;
+  const e={...DATA.effectif};
+  if(tranche==='plus6'){if(sexe==='M')e.mPlus=Math.max(0,(e.mPlus||0)-qte);else e.fPlus=Math.max(0,(e.fPlus||0)-qte);}
+  else{if(sexe==='M')e.mMoins=Math.max(0,(e.mMoins||0)-qte);else e.fMoins=Math.max(0,(e.fMoins||0)-qte);}
+  save('effectif',e);
+  const mvts=toArr(DATA.mouvements);
+  mvts.push({id:nextId(mvts),date,tranche,sexe,qte:-qte,obs:(lang==='fr'?'DÉCÈS — ':'وفاة — ')+obs});
+  save('mouvements',mvts);
+  cm();
+}
+
 function delMvt(id){
   if(!isAdmin)return;
   if(!confirm(lang==='fr'?'Supprimer ce mouvement ?':'حذف هذه الحركة؟'))return;
