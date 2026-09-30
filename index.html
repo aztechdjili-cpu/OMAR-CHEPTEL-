@@ -726,11 +726,15 @@ function svMvt(tranche,sign){
 }
 function declarerDeces(){
   if(!isAdmin) return;
-  om(lang==='fr'?'Déclarer un décès':'تسجيل نفوق',
+  const naissances=toArr(DATA.naissances);
+  const porteeOptions=naissances.length
+    ? naissances.map(n=>'<option value="'+n.id+'">'+n.date+' — '+(n.m||0)+'M / '+(n.f||0)+'F ('+( lang==='fr'?'morts actuels':'نفوق حالي')+': '+(n.mort||0)+')</option>').join('')
+    : '<option value="">'+(lang==='fr'?'Aucune naissance enregistrée':'لا توجد مواليد')+'</option>';
+  om(lang==='fr'?'Déclarer un décès bébé':'تسجيل نفوق مولود',
     '<div class="fgrid">'
-    +'<div class="fgroup"><label>'+T('date')+'</label><input type="date" id="dc_d" value="'+new Date().toISOString().slice(0,10)+'"></div>'
-    +'<div class="fgroup"><label>'+(lang==='fr'?'Tranche':'الفئة')+'</label><select id="dc_tr"><option value="moins6">-6 mois</option><option value="plus6">+6 mois</option></select></div>'
-    +'<div class="fgroup"><label>'+(lang==='fr'?'Sexe':'الجنس')+'</label><select id="dc_s"><option value="M">'+(lang==='fr'?'Mâle':'ذكر')+'</option><option value="F">'+(lang==='fr'?'Femelle':'أنثى')+'</option></select></div>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?'Date du décès':'تاريخ الوفاة')+'</label><input type="date" id="dc_d" value="'+new Date().toISOString().slice(0,10)+'"></div>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?'Portée concernée':'الولادة المعنية')+'</label><select id="dc_portee">'+porteeOptions+'</select></div>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?'Sexe du bébé':'جنس المولود')+'</label><select id="dc_s"><option value="M">'+(lang==='fr'?'Mâle':'ذكر')+'</option><option value="F">'+(lang==='fr'?'Femelle':'أنثى')+'</option></select></div>'
     +'<div class="fgroup"><label>'+(lang==='fr'?'Nombre de décès':'عدد النفوق')+'</label><input type="number" id="dc_q" value="1" min="1"></div>'
     +'<div class="fgroup full"><label>'+(lang==='fr'?'Cause / Observation':'السبب / ملاحظة')+'</label><input type="text" id="dc_o" placeholder="'+(lang==='fr'?'Ex: Maladie, accident...':'مثال: مرض، حادث...')+'"></div>'
     +'</div>',
@@ -739,18 +743,32 @@ function declarerDeces(){
   );
 }
 function svDeces(){
-  const tranche=document.getElementById('dc_tr').value;
+  const porteeId=parseInt(document.getElementById('dc_portee').value)||0;
   const sexe=document.getElementById('dc_s').value;
   const qte=parseInt(document.getElementById('dc_q').value)||1;
   const date=document.getElementById('dc_d').value;
   const obs=document.getElementById('dc_o').value;
+  // MAJ cheptel -6 mois
   const e={...DATA.effectif};
-  if(tranche==='plus6'){if(sexe==='M')e.mPlus=Math.max(0,(e.mPlus||0)-qte);else e.fPlus=Math.max(0,(e.fPlus||0)-qte);}
-  else{if(sexe==='M')e.mMoins=Math.max(0,(e.mMoins||0)-qte);else e.fMoins=Math.max(0,(e.fMoins||0)-qte);}
+  if(sexe==='M') e.mMoins=Math.max(0,(e.mMoins||0)-qte);
+  else e.fMoins=Math.max(0,(e.fMoins||0)-qte);
   save('effectif',e);
+  // MAJ historique mouvements
   const mvts=toArr(DATA.mouvements);
-  mvts.push({id:nextId(mvts),date,tranche,sexe,qte:-qte,obs:(lang==='fr'?'DÉCÈS — ':'وفاة — ')+obs});
+  mvts.push({id:nextId(mvts),date,tranche:'moins6',sexe,qte:-qte,obs:(lang==='fr'?'DÉCÈS — ':'وفاة — ')+obs});
   save('mouvements',mvts);
+  // MAJ naissance concernée — incrémenter le compteur mort
+  if(porteeId){
+    const naissances=toArr(DATA.naissances).map(n=>{
+      if(n.id===porteeId){
+        const newMort=(n.mort||0)+qte;
+        const newSol=Math.max(0,(n.sol||0)-qte);
+        return {...n, mort:newMort, sol:newSol};
+      }
+      return n;
+    });
+    save('naissances',naissances);
+  }
   cm();
 }
 
