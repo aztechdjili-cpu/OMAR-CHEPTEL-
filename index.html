@@ -147,6 +147,7 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="ni" onclick="go('dep')" data-p="dep"><i class="ti ti-receipt"></i><span data-fr="Dépenses" data-ar="المصاريف">Dépenses</span></div>
     <div class="ni" onclick="go('bil')" data-p="bil"><i class="ti ti-scale"></i><span data-fr="Bilan financier" data-ar="الميزانية">Bilan financier</span></div>
     <div class="ni" onclick="go('av')" data-p="av"><i class="ti ti-arrows-exchange"></i><span data-fr="Achats & Ventes" data-ar="مشتريات ومبيعات">Achats & Ventes</span></div>
+    <div class="ni" onclick="go('notes')" data-p="notes"><i class="ti ti-notes"></i><span data-fr="Notes" data-ar="ملاحظات">Notes</span></div>
   </nav>
   <div class="sidebar-footer">
     <button class="mode-btn" id="modeBtn" onclick="toggleMode()"><i class="ti ti-lock"></i> <span id="modeBtnTxt">Mode Admin</span></button>
@@ -269,6 +270,7 @@ const META = {
   dep:{fr:'Dépenses',ar:'المصاريف',sf:'Suivi par catégorie',sa:'متابعة حسب الفئة'},
   bil:{fr:'Bilan financier',ar:'الميزانية المالية',sf:'Résultats Sept → Déc 2026',sa:'النتائج سبت → ديس 2026'},
   av:{fr:'Achats & Ventes',ar:'مشتريات ومبيعات',sf:'Registre des transactions',sa:'سجل المعاملات'},
+  notes:{fr:'Notes',ar:'ملاحظات',sf:'Mémos et rappels',sa:'مذكرات وتذكيرات'},
 };
 function T(k){return({
   add:{fr:'+ Ajouter',ar:'+ إضافة'},date:{fr:'Date',ar:'التاريخ'},
