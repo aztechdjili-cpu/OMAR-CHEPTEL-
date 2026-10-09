@@ -312,7 +312,10 @@ function buildNotesPage(){
   notes.forEach(function(n){
     rows+='<tr><td style="width:110px">'+n.date+'</td>'
       +'<td>'+(n.titre?'<strong>'+n.titre+'</strong>':'')+(n.titre&&n.corps?'<br>':'')+(n.corps||'')+'</td>'
-      +'<td style="width:40px;text-align:center">'+(isAdmin?'<button class="btn-icon" onclick="delNote('+n.id+')"><i class="ti ti-trash"></i></button>':'')+'</td></tr>';
+      +'<td style="width:80px;text-align:center">'+(isAdmin
+        ?'<button class="btn-icon" onclick="editNote('+n.id+')" title="Modifier"><i class="ti ti-pencil"></i></button> '
+         +'<button class="btn-icon" onclick="delNote('+n.id+')" title="Supprimer"><i class="ti ti-trash"></i></button>'
+        :'')+'</td></tr>';
   });
   var addBtn=isAdmin?'<button class="btn-p" onclick="addNote()"><i class="ti ti-plus"></i> '+(lang==='fr'?'Ajouter une note':'إضافة ملاحظة')+'</button>':'';
   var countLbl=lang==='fr'?notes.length+' note(s)':notes.length+' ملاحظة';
@@ -324,6 +327,31 @@ function buildNotesPage(){
       +(lang==='fr'?'Aucune note pour le moment':'\u0644\u0627 \u062a\u0648\u062c\u062f \u0645\u0644\u0627\u062d\u0638\u0627\u062a')+'</div>';
   return '<div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">'
     +'<span style="font-size:14px;color:var(--text2)">'+countLbl+'</span>'+addBtn+'</div>'+tableOrEmpty;
+}
+function editNote(id){
+  if(!isAdmin) return;
+  const n=toArr(DATA.notes).find(function(x){return x.id===id;});
+  if(!n) return;
+  om(lang==='fr'?'Modifier la note':'تعديل الملاحظة',
+    '<div class="fgrid">'
+    +'<div class="fgroup"><label>'+T('date')+'</label><input type="date" id="nt_d" value="'+n.date+'"></div>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?'Titre':'العنوان')+'</label><input type="text" id="nt_t" value="'+(n.titre||'').replace(/"/g,"&quot;")+'"></div>'
+    +'<div class="fgroup full"><label>'+(lang==='fr'?'Contenu':'المحتوى')+'</label><textarea id="nt_c" rows="4" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;resize:vertical">'+(n.corps||'')+'</textarea></div>'
+    +'</div>',
+    '<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> '+T('cancel')+'</button>'
+    +'<button class="btn-p" onclick="svEditNote('+id+')"><i class="ti ti-check"></i> '+T('save')+'</button>'
+  );
+}
+function svEditNote(id){
+  const date=document.getElementById('nt_d').value;
+  const titre=document.getElementById('nt_t').value.trim();
+  const corps=document.getElementById('nt_c').value.trim();
+  const notes=toArr(DATA.notes).map(function(n){
+    return n.id===id?{id:n.id,date:date,titre:titre,corps:corps}:n;
+  });
+  save('notes',notes);
+  cm();
+  setTimeout(function(){go('notes');},300);
 }
 function addNote(){
   if(!isAdmin) return;
