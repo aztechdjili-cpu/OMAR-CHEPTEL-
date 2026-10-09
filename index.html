@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -223,23 +222,6 @@ let DATA = {
   ventes: [],
   capital: 340000,
   historique_capital: [],
-  notes(){
-    const notes=toArr(DATA.notes).sort((a,b)=>b.date.localeCompare(a.date));
-    const rows=notes.map(n=>`<tr>
-      <td style="width:110px">${n.date}</td>
-      <td><strong>${n.titre||''}</strong>${n.titre&&n.corps?'<br>':''}${n.corps||''}</td>
-      <td style="width:40px;text-align:center">${isAdmin?`<button class="btn-icon" onclick="delNote(${n.id})"><i class="ti ti-trash"></i></button>`:''}</td>
-    </tr>`).join('');
-    return `<div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-size:14px;color:var(--text2)">${lang==='fr'?notes.length+' note(s)':notes.length+' ملاحظة'}</span>
-      ${isAdmin?`<button class="btn-p" onclick="addNote()"><i class="ti ti-plus"></i> ${lang==='fr'?'Ajouter une note':'إضافة ملاحظة'}</button>`:''}
-    </div>
-    ${notes.length?`<div class="card"><div class="tblwrap"><table>
-      <thead><tr><th>${T('date')}</th><th>${lang==='fr'?'Note':'الملاحظة'}</th><th></th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div></div>`
-    :`<div class="card" style="text-align:center;padding:40px;color:var(--text2)"><i class="ti ti-notes" style="font-size:48px;display:block;margin-bottom:12px"></i>${lang==='fr'?'Aucune note pour le moment':'لا توجد ملاحظات حتى الآن'}</div>`}`;
-  }
 };
 
 // ══════════════════════════════════════════
@@ -322,6 +304,25 @@ function adminAddBtn(action,label){
 // ══════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════
+function buildNotesPage(){
+  const notes=toArr(DATA.notes).sort(function(a,b){return b.date.localeCompare(a.date);});
+  var rows='';
+  notes.forEach(function(n){
+    rows+='<tr><td style="width:110px">'+n.date+'</td>'
+      +'<td>'+(n.titre?'<strong>'+n.titre+'</strong>':'')+(n.titre&&n.corps?'<br>':'')+(n.corps||'')+'</td>'
+      +'<td style="width:40px;text-align:center">'+(isAdmin?'<button class="btn-icon" onclick="delNote('+n.id+')"><i class="ti ti-trash"></i></button>':'')+'</td></tr>';
+  });
+  var addBtn=isAdmin?'<button class="btn-p" onclick="addNote()"><i class="ti ti-plus"></i> '+(lang==='fr'?'Ajouter une note':'إضافة ملاحظة')+'</button>':'';
+  var countLbl=lang==='fr'?notes.length+' note(s)':notes.length+' ملاحظة';
+  var tableOrEmpty=notes.length
+    ?'<div class="card"><div class="tblwrap"><table><thead><tr><th>'
+      +T('date')+'</th><th>'+(lang==='fr'?'Note':'الملاحظة')+'</th><th></th></tr></thead>'
+      +'<tbody>'+rows+'</tbody></table></div></div>'
+    :'<div class="card" style="text-align:center;padding:40px;color:var(--text2)"><i class="ti ti-notes" style="font-size:48px;display:block;margin-bottom:12px"></i>'
+      +(lang==='fr'?'Aucune note pour le moment':'\u0644\u0627 \u062a\u0648\u062c\u062f \u0645\u0644\u0627\u062d\u0638\u0627\u062a')+'</div>';
+  return '<div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">'
+    +'<span style="font-size:14px;color:var(--text2)">'+countLbl+'</span>'+addBtn+'</div>'+tableOrEmpty;
+}
 function addNote(){
   if(!isAdmin) return;
   om(lang==='fr'?'Ajouter une note':'إضافة ملاحظة',
@@ -727,24 +728,8 @@ const PAGES = {
       <tr><td colspan="6">ACHATS</td><td style="text-align:right;color:var(--red)">${fn(tA)}</td><td colspan="2"></td></tr>
       <tr><td colspan="6">SOLDE</td><td style="text-align:right;font-weight:600;color:${tV-tA>=0?'var(--green)':'var(--red)'}">${fn(tV-tA)}</td><td colspan="2"></td></tr>
     </tfoot></table></div></div>`;
-  }
-  notes(){
-    const notes=toArr(DATA.notes).sort((a,b)=>b.date.localeCompare(a.date));
-    const rows=notes.map(n=>`<tr>
-      <td style="width:110px">${n.date}</td>
-      <td><strong>${n.titre||''}</strong>${n.titre&&n.corps?'<br>':''}${n.corps||''}</td>
-      <td style="width:40px;text-align:center">${isAdmin?`<button class="btn-icon" onclick="delNote(${n.id})"><i class="ti ti-trash"></i></button>`:''}</td>
-    </tr>`).join('');
-    return `<div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-size:14px;color:var(--text2)">${lang==='fr'?notes.length+' note(s)':notes.length+' ملاحظة'}</span>
-      ${isAdmin?`<button class="btn-p" onclick="addNote()"><i class="ti ti-plus"></i> ${lang==='fr'?'Ajouter une note':'إضافة ملاحظة'}</button>`:''}
-    </div>
-    ${notes.length?`<div class="card"><div class="tblwrap"><table>
-      <thead><tr><th>${T('date')}</th><th>${lang==='fr'?'Note':'الملاحظة'}</th><th></th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div></div>`
-    :`<div class="card" style="text-align:center;padding:40px;color:var(--text2)"><i class="ti ti-notes" style="font-size:48px;display:block;margin-bottom:12px"></i>${lang==='fr'?'Aucune note pour le moment':'لا توجد ملاحظات حتى الآن'}</div>`}`;
-  }
+  },
+  notes(){return buildNotesPage();}
 };
 
 // ══════════════════════════════════════════
