@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -222,6 +223,23 @@ let DATA = {
   ventes: [],
   capital: 340000,
   historique_capital: [],
+  notes(){
+    const notes=toArr(DATA.notes).sort((a,b)=>b.date.localeCompare(a.date));
+    const rows=notes.map(n=>`<tr>
+      <td style="width:110px">${n.date}</td>
+      <td><strong>${n.titre||''}</strong>${n.titre&&n.corps?'<br>':''}${n.corps||''}</td>
+      <td style="width:40px;text-align:center">${isAdmin?`<button class="btn-icon" onclick="delNote(${n.id})"><i class="ti ti-trash"></i></button>`:''}</td>
+    </tr>`).join('');
+    return `<div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:14px;color:var(--text2)">${lang==='fr'?notes.length+' note(s)':notes.length+' ملاحظة'}</span>
+      ${isAdmin?`<button class="btn-p" onclick="addNote()"><i class="ti ti-plus"></i> ${lang==='fr'?'Ajouter une note':'إضافة ملاحظة'}</button>`:''}
+    </div>
+    ${notes.length?`<div class="card"><div class="tblwrap"><table>
+      <thead><tr><th>${T('date')}</th><th>${lang==='fr'?'Note':'الملاحظة'}</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div></div>`
+    :`<div class="card" style="text-align:center;padding:40px;color:var(--text2)"><i class="ti ti-notes" style="font-size:48px;display:block;margin-bottom:12px"></i>${lang==='fr'?'Aucune note pour le moment':'لا توجد ملاحظات حتى الآن'}</div>`}`;
+  }
 };
 
 // ══════════════════════════════════════════
@@ -304,6 +322,35 @@ function adminAddBtn(action,label){
 // ══════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════
+function addNote(){
+  if(!isAdmin) return;
+  om(lang==='fr'?'Ajouter une note':'إضافة ملاحظة',
+    '<div class="fgrid">'
+    +'<div class="fgroup"><label>'+T('date')+'</label><input type="date" id="nt_d" value="'+new Date().toISOString().slice(0,10)+'"></div>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?'Titre (court)':'العنوان (قصير)')+'</label><input type="text" id="nt_t" placeholder="'+(lang==='fr'?'Ex: Vaccin, rappel...':'مثال: لقاح، تذكير...')+'"></div>'
+    +'<div class="fgroup full"><label>'+(lang==='fr'?'Contenu':'المحتوى')+'</label><textarea id="nt_c" rows="4" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;resize:vertical"></textarea></div>'
+    +'</div>',
+    '<button class="btn-s" onclick="cm()"><i class="ti ti-x"></i> '+T('cancel')+'</button>'
+    +'<button class="btn-p" onclick="svNote()"><i class="ti ti-check"></i> '+T('save')+'</button>'
+  );
+}
+function svNote(){
+  const date=document.getElementById('nt_d').value;
+  const titre=document.getElementById('nt_t').value.trim();
+  const corps=document.getElementById('nt_c').value.trim();
+  if(!titre&&!corps) return;
+  const notes=toArr(DATA.notes);
+  notes.push({id:nextId(notes),date,titre,corps});
+  save('notes',notes);
+  cm();
+  setTimeout(()=>go('notes'),300);
+}
+function delNote(id){
+  if(!isAdmin||!confirm(lang==='fr'?'Supprimer cette note ?':'حذف هذه الملاحظة؟')) return;
+  const notes=toArr(DATA.notes).filter(n=>n.id!==id);
+  save('notes',notes);
+  setTimeout(()=>go('notes'),300);
+}
 function go(p){
   CP=p;
   document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('active',n.dataset.p===p));
@@ -680,6 +727,23 @@ const PAGES = {
       <tr><td colspan="6">ACHATS</td><td style="text-align:right;color:var(--red)">${fn(tA)}</td><td colspan="2"></td></tr>
       <tr><td colspan="6">SOLDE</td><td style="text-align:right;font-weight:600;color:${tV-tA>=0?'var(--green)':'var(--red)'}">${fn(tV-tA)}</td><td colspan="2"></td></tr>
     </tfoot></table></div></div>`;
+  }
+  notes(){
+    const notes=toArr(DATA.notes).sort((a,b)=>b.date.localeCompare(a.date));
+    const rows=notes.map(n=>`<tr>
+      <td style="width:110px">${n.date}</td>
+      <td><strong>${n.titre||''}</strong>${n.titre&&n.corps?'<br>':''}${n.corps||''}</td>
+      <td style="width:40px;text-align:center">${isAdmin?`<button class="btn-icon" onclick="delNote(${n.id})"><i class="ti ti-trash"></i></button>`:''}</td>
+    </tr>`).join('');
+    return `<div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:14px;color:var(--text2)">${lang==='fr'?notes.length+' note(s)':notes.length+' ملاحظة'}</span>
+      ${isAdmin?`<button class="btn-p" onclick="addNote()"><i class="ti ti-plus"></i> ${lang==='fr'?'Ajouter une note':'إضافة ملاحظة'}</button>`:''}
+    </div>
+    ${notes.length?`<div class="card"><div class="tblwrap"><table>
+      <thead><tr><th>${T('date')}</th><th>${lang==='fr'?'Note':'الملاحظة'}</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div></div>`
+    :`<div class="card" style="text-align:center;padding:40px;color:var(--text2)"><i class="ti ti-notes" style="font-size:48px;display:block;margin-bottom:12px"></i>${lang==='fr'?'Aucune note pour le moment':'لا توجد ملاحظات حتى الآن'}</div>`}`;
   }
 };
 
