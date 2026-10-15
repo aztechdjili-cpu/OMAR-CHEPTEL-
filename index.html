@@ -811,7 +811,7 @@ function declarerDeces(){
   om(lang==='fr'?'Déclarer un décès':'تسجيل نفوق',
     '<div class="fgrid">'
     +'<div class="fgroup"><label>'+(lang==='fr'?'Date du décès':'تاريخ الوفاة')+'</label><input type="date" id="dc_d" value="'+new Date().toISOString().slice(0,10)+'"></div>'
-    +'<div class="fgroup"><label>'+(lang==='fr'?'Tranche d'âge':'الفئة العمرية')+'</label>'
+    +'<div class="fgroup"><label>'+(lang==='fr'?"Tranche d'âge":'الفئة العمرية')+'</label>'
       +'<select id="dc_tr" onchange="togglePortee()">'
       +'<option value="moins6">'+(lang==='fr'?'Agneau (-6 mois)':'حمل (-6 أشهر)')+'</option>'
       +'<option value="plus6">'+(lang==='fr'?'Adulte (+6 mois)':'بالغ (+6 أشهر)')+'</option>'
