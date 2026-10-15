@@ -647,6 +647,9 @@ const PAGES = {
       <div class="empty"><i class="ti ti-heart"></i>${lang==='fr'?'Aucune naissance':'لا توجد مواليد'}</div></div>`;
     const tM=n.reduce((s,x)=>s+(x.m||0),0),tF=n.reduce((s,x)=>s+(x.f||0),0);
     const tMo=n.reduce((s,x)=>s+(x.mort||0),0),tV=n.reduce((s,x)=>s+(x.sol||0),0);
+    // Vivants par sexe : approximation sur ratio M/F par portée
+    const vM=n.reduce((s,x)=>{const tot=(x.m||0)+(x.f||0);if(!tot)return s;const morts=x.mort||0;const viv=x.sol||0;return s+Math.round(viv*(x.m||0)/tot);},0);
+    const vF=Math.max(0,tV-vM);
     const rows=n.map(r=>`<tr><td>${r.id}</td><td>${r.date}</td>
       <td style="text-align:center">${r.m||0}</td><td style="text-align:center">${r.f||0}</td>
       <td style="text-align:center;color:var(--red)">${r.mort||0}</td>
@@ -654,11 +657,13 @@ const PAGES = {
       <td><span class="${r.aid==='oui'?'aid-oui':'aid-non'}">${r.aid==='oui'?'✓ Aïd':'—'}</span></td>
       <td style="font-size:11px;color:var(--text2)">${r.obs||'—'}</td>
       <td>${adminBtn('delBb',r.id)}</td></tr>`).join('');
-    return`${visitorBanner()}<div class="kgrid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-      <div class="kcard"><div class="klabel">M</div><div class="kval">${tM}</div></div>
-      <div class="kcard sky"><div class="klabel">F</div><div class="kval">${tF}</div></div>
+    return`${visitorBanner()}<div class="kgrid" style="grid-template-columns:repeat(6,1fr);margin-bottom:14px">
+      <div class="kcard"><div class="klabel">${lang==='fr'?'Nés M':'مواليد ذ'}</div><div class="kval">${tM}</div></div>
+      <div class="kcard sky"><div class="klabel">${lang==='fr'?'Nés F':'مواليد أ'}</div><div class="kval">${tF}</div></div>
       <div class="kcard red"><div class="klabel">${lang==='fr'?'Morts':'نفوق'}</div><div class="kval">${tMo}</div></div>
-      <div class="kcard"><div class="klabel">${lang==='fr'?'Vivants':'أحياء'}</div><div class="kval">${tV}</div></div>
+      <div class="kcard"><div class="klabel">${lang==='fr'?'Vivants total':'أحياء'}</div><div class="kval">${tV}</div></div>
+      <div class="kcard"><div class="klabel" style="color:var(--blue)">♂ ${lang==='fr'?'Vivants':'أحياء'}</div><div class="kval" style="color:var(--blue)">${vM}</div></div>
+      <div class="kcard sky"><div class="klabel" style="color:var(--green)">♀ ${lang==='fr'?'Vivantes':'أحياء'}</div><div class="kval" style="color:var(--green)">${vF}</div></div>
     </div>
     <div class="row-top"><span></span>${adminAddBtn('addBb',T('add'))}</div>
     <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Registre naissances':'سجل المواليد'}</span></div>
