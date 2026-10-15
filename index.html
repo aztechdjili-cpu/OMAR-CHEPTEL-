@@ -541,16 +541,17 @@ const PAGES = {
       // Aïd 2027 (mai 2027) : mâles ayant au moins 6 mois → nés avant nov 2026
       // Sources : 1) mâles adultes +6 mois dans effectif  2) agneaux mâles nés avant nov 2026
       const aidNovLimit='2026-11-01'; // nés avant cette date = 6+ mois en mai 2027
-      const malesAdultes=e.mPlus||0; // déjà +6 mois dans l'effectif (dont les 10 du départ)
-      // Agneaux mâles nés avant nov 2026 encore présents (non morts)
+      // Tous les mâles actuels (mPlus + mMoins) auront l'âge requis en mai 2027
+      // Les ventes sont déjà déduites de l'effectif automatiquement
+      const malesAdultes=e.mPlus||0;
+      const malesMoins=e.mMoins||0;
+      // Agneaux mâles nés avant nov 2026 (pour le détail des portées uniquement)
       const porteesAgneaux=n.filter(x=>x.date&&x.date<aidNovLimit&&(x.m||0)>0);
       const malesAgneauxNes=porteesAgneaux.reduce((s,x)=>s+(x.m||0),0);
       const malesAgneauxMorts=porteesAgneaux.reduce((s,x)=>s+(x.mort||0),0);
       const malesAgneauxStock=Math.max(0,malesAgneauxNes-malesAgneauxMorts);
-      // Mâles +6 mois déjà vendus
-      const malesAdultesVendus=toArr(DATA.ventes).filter(x=>x.type==='VENTE'&&x.sexe==='M'&&x.tranche==='plus6').reduce((s,x)=>s+(x.qte||0),0);
-      // Total stock disponible
-      const stock=Math.max(0,malesAdultes+malesAgneauxStock);
+      // Total stock = mPlus + mMoins (tous vendables en mai 2027)
+      const stock=malesAdultes+malesMoins;
       const daysLeft=Math.round((new Date('2027-05-01')-new Date())/(1000*60*60*24));
       const porteeRows=porteesAgneaux.map(p=>`<tr>
         <td>${p.date}</td>
