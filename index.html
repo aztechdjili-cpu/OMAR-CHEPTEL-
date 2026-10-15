@@ -565,9 +565,9 @@ const PAGES = {
           <span style="font-size:11px;color:var(--amber-text)">${lang==='fr'?`J-${daysLeft} (mai 2027)`:`${daysLeft} يوم (مايو 2027)`}</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px">
-          <div class="fcell"><div class="fclbl">${lang==='fr'?'Mâles adultes +6 mois (effectif)':'ذكور بالغون +6 أشهر'}</div><div class="fcval" style="color:var(--blue)">${malesAdultes}</div></div>
-          <div class="fcell"><div class="fclbl">${lang==='fr'?'Agneaux ♂ nés avant nov 2026':'حملان ♂ قبل نوفمبر 2026'}</div><div class="fcval" style="color:var(--blue-text)">${malesAgneauxStock}</div></div>
-          <div class="fcell"><div class="fclbl">${lang==='fr'?'Vendus (+6 mois)':'مباعون (+6 أشهر)'}</div><div class="fcval" style="color:var(--red)">${malesAdultesVendus}</div></div>
+          <div class="fcell"><div class="fclbl">${lang==='fr'?'Mâles +6 mois (effectif)':'ذكور +6 أشهر'}</div><div class="fcval" style="color:var(--blue)">${malesAdultes}</div></div>
+          <div class="fcell"><div class="fclbl">${lang==='fr'?'Mâles -6 mois (seront ≥6 mois en mai 2027)':'ذكور -6 أشهر (سيبلغون 6 أشهر)'}</div><div class="fcval" style="color:var(--blue-text)">${malesMoins}</div></div>
+          <div class="fcell"><div class="fclbl">${lang==='fr'?'Vendus (déduits automatiquement)':'مباعون (محسوبون تلقائياً)'}</div><div class="fcval" style="color:var(--text3)">✓</div></div>
           <div class="fcell" style="background:var(--amber-bg);border-radius:var(--r)"><div class="fclbl" style="color:var(--amber-text)">${lang==='fr'?'Disponibles pour l\'Aïd':'متاحون للعيد'}</div><div class="fcval" style="color:var(--amber);font-size:28px">${stock}</div></div>
         </div>
         <div style="padding:0 14px 4px 14px;font-size:11px;color:var(--text3)">${lang==='fr'?'Agneaux mâles nés avant novembre 2026 (6+ mois en mai 2027) :':'الحملان الذكور المولودون قبل نوفمبر 2026 :'}</div>
