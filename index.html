@@ -538,33 +538,38 @@ const PAGES = {
       </table></div>
     </div>
     ${(()=>{
-      // Mâles vendables Aïd 2027 : nés avant mai 2026 (date < 2026-05-01), encore présents
-      const aidLimit='2026-05-01';
-      const portees=n.filter(x=>x.date&&x.date<aidLimit&&(x.m||0)>0);
-      const malesNes=portees.reduce((s,x)=>s+(x.m||0),0);
-      const malesMorts=portees.reduce((s,x)=>s+(x.mort||0),0); // mort toutes confondues (approx)
-      // Mâles vendus issus de la tranche moins6 (agneaux vendus, approximation)
-      const malesVendus=toArr(DATA.ventes).filter(x=>x.type==='VENTE'&&x.sexe==='M'&&x.tranche==='moins6').reduce((s,x)=>s+(x.qte||0),0);
-      const stock=Math.max(0,malesNes-malesMorts-malesVendus);
+      // Aïd 2027 (mai 2027) : mâles ayant au moins 6 mois → nés avant nov 2026
+      // Sources : 1) mâles adultes +6 mois dans effectif  2) agneaux mâles nés avant nov 2026
+      const aidNovLimit='2026-11-01'; // nés avant cette date = 6+ mois en mai 2027
+      const malesAdultes=e.mPlus||0; // déjà +6 mois dans l'effectif (dont les 10 du départ)
+      // Agneaux mâles nés avant nov 2026 encore présents (non morts)
+      const porteesAgneaux=n.filter(x=>x.date&&x.date<aidNovLimit&&(x.m||0)>0);
+      const malesAgneauxNes=porteesAgneaux.reduce((s,x)=>s+(x.m||0),0);
+      const malesAgneauxMorts=porteesAgneaux.reduce((s,x)=>s+(x.mort||0),0);
+      const malesAgneauxStock=Math.max(0,malesAgneauxNes-malesAgneauxMorts);
+      // Mâles +6 mois déjà vendus
+      const malesAdultesVendus=toArr(DATA.ventes).filter(x=>x.type==='VENTE'&&x.sexe==='M'&&x.tranche==='plus6').reduce((s,x)=>s+(x.qte||0),0);
+      // Total stock disponible
+      const stock=Math.max(0,malesAdultes+malesAgneauxStock);
       const daysLeft=Math.round((new Date('2027-05-01')-new Date())/(1000*60*60*24));
-      const porteeRows=portees.map(p=>`<tr>
+      const porteeRows=porteesAgneaux.map(p=>`<tr>
         <td>${p.date}</td>
         <td style="text-align:center">${p.m||0}</td>
         <td style="text-align:center;color:var(--red)">${p.mort||0}</td>
         <td style="text-align:center;font-weight:600;color:var(--green)">${Math.max(0,(p.m||0)-(p.mort||0))}</td>
-      </tr>`).join('')||`<tr><td colspan="4" style="text-align:center;color:var(--text3)">${lang==='fr'?'Aucune naissance avant mai 2026':'لا مواليد قبل مايو 2026'}</td></tr>`;
+      </tr>`).join('')||`<tr><td colspan="4" style="text-align:center;color:var(--text3)">—</td></tr>`;
       return `<div class="card" style="border:2px solid var(--amber);margin-bottom:16px">
         <div class="card-hd" style="background:var(--amber-bg)">
           <span class="card-tt" style="color:var(--amber-text)">🐏 ${lang==='fr'?'Stock mâles — Aïd el-Adha 2027':'مخزون الذكور — عيد الأضحى 2027'}</span>
           <span style="font-size:11px;color:var(--amber-text)">${lang==='fr'?`J-${daysLeft} (mai 2027)`:`${daysLeft} يوم (مايو 2027)`}</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px">
-          <div class="fcell"><div class="fclbl">${lang==='fr'?'Nés avant mai 2026':'مواليد قبل مايو 2026'}</div><div class="fcval" style="color:var(--blue)">${malesNes}</div></div>
-          <div class="fcell"><div class="fclbl">${lang==='fr'?'Décédés':'نافقون'}</div><div class="fcval" style="color:var(--red)">${malesMorts}</div></div>
-          <div class="fcell"><div class="fclbl">${lang==='fr'?'Déjà vendus':'تم بيعهم'}</div><div class="fcval" style="color:var(--red)">${malesVendus}</div></div>
-          <div class="fcell" style="background:var(--amber-bg);border-radius:var(--r)"><div class="fclbl" style="color:var(--amber-text)">${lang==='fr'?'Disponibles pour vente':'متاحون للبيع'}</div><div class="fcval" style="color:var(--amber);font-size:28px">${stock}</div></div>
+          <div class="fcell"><div class="fclbl">${lang==='fr'?'Mâles adultes +6 mois (effectif)':'ذكور بالغون +6 أشهر'}</div><div class="fcval" style="color:var(--blue)">${malesAdultes}</div></div>
+          <div class="fcell"><div class="fclbl">${lang==='fr'?'Agneaux ♂ nés avant nov 2026':'حملان ♂ قبل نوفمبر 2026'}</div><div class="fcval" style="color:var(--blue-text)">${malesAgneauxStock}</div></div>
+          <div class="fcell"><div class="fclbl">${lang==='fr'?'Vendus (+6 mois)':'مباعون (+6 أشهر)'}</div><div class="fcval" style="color:var(--red)">${malesAdultesVendus}</div></div>
+          <div class="fcell" style="background:var(--amber-bg);border-radius:var(--r)"><div class="fclbl" style="color:var(--amber-text)">${lang==='fr'?'Disponibles pour l\'Aïd':'متاحون للعيد'}</div><div class="fcval" style="color:var(--amber);font-size:28px">${stock}</div></div>
         </div>
-        <div style="padding:0 14px 14px;font-size:11px;color:var(--text3)">${lang==='fr'?'Portées concernées (nées avant mai 2026, mâles) :':'الولادات المعنية (قبل مايو 2026، ذكور) :'}</div>
+        <div style="padding:0 14px 4px 14px;font-size:11px;color:var(--text3)">${lang==='fr'?'Agneaux mâles nés avant novembre 2026 (6+ mois en mai 2027) :':'الحملان الذكور المولودون قبل نوفمبر 2026 :'}</div>
         <div class="tblwrap"><table><thead><tr>
           <th>${lang==='fr'?'Date naissance':'تاريخ الولادة'}</th>
           <th style="text-align:center">${lang==='fr'?'Mâles nés':'ذكور مولودون'}</th>
