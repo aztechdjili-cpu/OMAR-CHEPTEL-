@@ -540,16 +540,20 @@ const PAGES = {
     ${(()=>{
       // Aïd 2027 (mai 2027) : mâles ayant au moins 6 mois → nés avant nov 2026
       // Sources : 1) mâles adultes +6 mois dans effectif  2) agneaux mâles nés avant nov 2026
-      // Aïd 2027 (mai 2027) : minimum 11 mois → seuls les mâles déjà +6 mois sont éligibles
-      // Les agneaux nés depuis sept 2026 n'auront que 7-8 mois → exclus
+      // Aïd 2027 (mai 2027) : minimum 11 mois
+      // Éligibles : mPlus (adultes) + mâles achetés à 5 mois en oct 2026 (auront 11 mois en mai 2027)
+      // Les 11 achetés à 5 mois sont dans mMoins avec les agneaux nés (11 nés depuis sept)
+      // mMoins = 11 achetés 5 mois + 11 nés = 22 → seuls les 11 achetés sont éligibles
       const malesAdultes=e.mPlus||0;
-      // Agneaux trop jeunes (pour info)
+      // Agneaux nés depuis sept 2026 (trop jeunes, pour info uniquement)
       const porteesAgneaux=n.filter(x=>x.date&&x.date>='2026-09-01'&&(x.m||0)>0);
       const malesAgneauxNes=porteesAgneaux.reduce((s,x)=>s+(x.m||0),0);
       const malesAgneauxMorts=porteesAgneaux.reduce((s,x)=>s+(x.mort||0),0);
       const malesAgneauxStock=Math.max(0,malesAgneauxNes-malesAgneauxMorts);
-      // Total stock = uniquement les adultes mPlus (ventes déjà déduites)
-      const stock=malesAdultes;
+      // 11 mâles achetés à 5 mois en oct 2026 → éligibles Aïd 2027
+      const malesAchetes5mois=11;
+      // Total stock Aïd 2027
+      const stock=malesAdultes+malesAchetes5mois;
       const daysLeft=Math.round((new Date('2027-05-01')-new Date())/(1000*60*60*24));
       const porteeRows=porteesAgneaux.map(p=>`<tr>
         <td>${p.date}</td>
@@ -564,7 +568,7 @@ const PAGES = {
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px">
           <div class="fcell"><div class="fclbl">${lang==='fr'?'Mâles +6 mois (effectif)':'ذكور +6 أشهر'}</div><div class="fcval" style="color:var(--blue)">${malesAdultes}</div></div>
-          <div class="fcell"><div class="fclbl">${lang==='fr'?'Agneaux ♂ (trop jeunes, <11 mois en mai 2027)':'حملان ♂ (صغار، أقل من 11 شهراً)'}</div><div class="fcval" style="color:var(--text3)">${malesAgneauxStock}</div></div>
+          <div class="fcell"><div class="fclbl">${lang==='fr'?'Achetés à 5 mois oct 2026 (11 mois en mai 2027)':'مشتراة عمرها 5 أشهر (11 شهراً في مايو)'}</div><div class="fcval" style="color:var(--blue-text)">${malesAchetes5mois}</div></div>
           <div class="fcell"><div class="fclbl">${lang==='fr'?'Vendus (déduits automatiquement)':'مباعون (محسوبون تلقائياً)'}</div><div class="fcval" style="color:var(--text3)">✓</div></div>
           <div class="fcell" style="background:var(--amber-bg);border-radius:var(--r)"><div class="fclbl" style="color:var(--amber-text)">${lang==='fr'?'Disponibles pour l\'Aïd':'متاحون للعيد'}</div><div class="fcval" style="color:var(--amber);font-size:28px">${stock}</div></div>
         </div>
