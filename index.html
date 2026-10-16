@@ -724,12 +724,23 @@ const PAGES = {
     const totA=v.filter(x=>x.type==='ACHAT').reduce((s,x)=>s+(x.tot||0),0);
     const solde=capital+totV-totA-totDep;
     const capEditBtn=isAdmin?`<div style="margin-top:6px"><button class="btn-p" style="font-size:11px;padding:5px 12px" onclick="editCapital()"><i class="ti ti-pencil"></i> ${lang==='fr'?'Modifier':'تعديل'}</button></div>`:'';
-    const rows=MOIS_LIST.map((m,i)=>{
+    // Map mois libellé → préfixe YYYY-MM pour matcher les dates de l'historique capital
+    const MOIS_PREFIX={'Septembre 2026':'2026-09','Octobre 2026':'2026-10','Novembre 2026':'2026-11','Décembre 2026':'2026-12'};
+    const hist=toArr(DATA.historique_capital);
+    const rows=MOIS_LIST.map((m)=>{
       const mDep=dep.filter(x=>x.mois===m).reduce((s,x)=>s+(x.mont||0),0);
       const mV=v.filter(x=>x.type==='VENTE'&&x.mois===m).reduce((s,x)=>s+(x.tot||0),0);
       const mA=v.filter(x=>x.type==='ACHAT'&&x.mois===m).reduce((s,x)=>s+(x.tot||0),0);
       const mRes=mV-mA-mDep;
-      return`<tr><td><strong>${m}</strong></td><td style="text-align:right">${i===0?fn(capital):'—'}</td><td style="text-align:right;color:var(--green)">${mV?fn(mV):'—'}</td><td style="text-align:right;color:var(--red)">${(mDep+mA)?fn(mDep+mA):'—'}</td><td style="text-align:right;font-weight:500;color:${mRes>=0?'var(--green)':'var(--red)'}">${(mV||mDep||mA)?fn(mRes):'—'}</td></tr>`;
+      const pfx=MOIS_PREFIX[m]||'';
+      // Somme des ajouts/retraits de capital enregistrés ce mois
+      const mCap=hist.filter(x=>x.date&&x.date.startsWith(pfx)).reduce((s,x)=>{
+        if(x.type==='ajout')return s+(x.montant||0);
+        if(x.type==='retrait')return s-(x.montant||0);
+        return s; // correction ignorée (valeur absolue, pas un flux)
+      },0);
+      const capCell=mCap!==0?`<span style="color:${mCap>0?'var(--green)':'var(--red)'}">${mCap>0?'+':''}${fn(mCap)}</span>`:'—';
+      return`<tr><td><strong>${m}</strong></td><td style="text-align:right">${capCell}</td><td style="text-align:right;color:var(--green)">${mV?fn(mV):'—'}</td><td style="text-align:right;color:var(--red)">${(mDep+mA)?fn(mDep+mA):'—'}</td><td style="text-align:right;font-weight:500;color:${mRes>=0?'var(--green)':'var(--red)'}">${(mV||mDep||mA)?fn(mRes):'—'}</td></tr>`;
     }).join('');
     return`${visitorBanner()}<div class="fin3">
       <div class="fcell"><div class="fclbl">${lang==='fr'?'Capital départ':'رأس المال'}</div><div class="fcval">${fn(capital)} <small style="font-size:11px">DZD</small>${capEditBtn}</div></div>
@@ -737,7 +748,7 @@ const PAGES = {
       <div class="fcell"><div class="fclbl">${lang==='fr'?'Solde actuel':'الرصيد'}</div><div class="fcval ${solde>=0?'pos':'neg'}">${fn(solde)} <small style="font-size:11px">DZD</small></div></div>
     </div>
     <div class="card"><div class="card-hd"><span class="card-tt">${lang==='fr'?'Bilan Septembre → Décembre 2026':'الميزانية سبتمبر → ديسمبر 2026'}</span></div>
-    <div class="tblwrap"><table style="min-width:500px"><thead><tr><th>${T('mois')}</th><th style="text-align:right">${lang==='fr'?'Cap. début':'رأس المال'}</th><th style="text-align:right">${lang==='fr'?'Recettes':'إيرادات'}</th><th style="text-align:right">${lang==='fr'?'Dépenses':'نفقات'}</th><th style="text-align:right">${T('res')}</th></tr></thead>
+    <div class="tblwrap"><table style="min-width:500px"><thead><tr><th>${T('mois')}</th><th style="text-align:right">${lang==='fr'?'Capital ajouté':'رأس المال'}</th><th style="text-align:right">${lang==='fr'?'Recettes':'إيرادات'}</th><th style="text-align:right">${lang==='fr'?'Dépenses':'نفقات'}</th><th style="text-align:right">${T('res')}</th></tr></thead>
     <tbody>${rows}</tbody></table></div></div>
     ${buildCapitalHist()}`;
   },
